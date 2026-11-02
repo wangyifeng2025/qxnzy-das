@@ -1,0 +1,7041 @@
+{
+ "source": "黔西南民族职业技术学院数据标准及填报模板（V1.0）.xlsx / 03_数据字典",
+ "version": "V1.0",
+ "types": [
+  {
+   "code": "D01",
+   "name": "专业层次",
+   "ref_standard": "ZYCCDM",
+   "applies_to": "ODS_ZYSZSJ；ODS_KCJBSJ；ODS_SKXXSJ；ODS_JZGJBSJ；ODS_XSJBSJ；ODS_XSXSSJ",
+   "remark": "国标仅定义职业本科、高职；中职代码3为校本扩展。",
+   "items": [
+    {
+     "value": "1",
+     "label": "职业本科",
+     "remark": null
+    },
+    {
+     "value": "2",
+     "label": "高职专科",
+     "remark": null
+    },
+    {
+     "value": "3",
+     "label": "中职",
+     "remark": null
+    }
+   ]
+  },
+  {
+   "code": "D02",
+   "name": "学制",
+   "ref_standard": "XZDM",
+   "applies_to": "ODS_ZYSZSJ；ODS_KCJBSJ；ODS_SKXXSJ；ODS_XSJBSJ；ODS_XSXSSJ",
+   "remark": "高职专科、职业本科常用二年、三年、四年、五年、八年；中职可用一年至五年各档。",
+   "items": [
+    {
+     "value": "1",
+     "label": "二年",
+     "remark": null
+    },
+    {
+     "value": "2",
+     "label": "两年半",
+     "remark": null
+    },
+    {
+     "value": "3",
+     "label": "三年",
+     "remark": null
+    },
+    {
+     "value": "4",
+     "label": "四年",
+     "remark": null
+    },
+    {
+     "value": "5",
+     "label": "五年",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "一年",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "一年半",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "三年半",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "四年半",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "八年",
+     "remark": null
+    }
+   ]
+  },
+  {
+   "code": "D03",
+   "name": "学位授予门类",
+   "ref_standard": null,
+   "applies_to": "ODS_ZYSZSJ",
+   "remark": "按教育部学位授予门类填写；专科专业无学位的填“无”。",
+   "items": [
+    {
+     "value": null,
+     "label": "哲学",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "经济学",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "法学",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "教育学",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "文学",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "历史学",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "理学",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "工学",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "农学",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "医学",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "军事学",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "管理学",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "艺术学",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "无",
+     "remark": null
+    }
+   ]
+  },
+  {
+   "code": "D04",
+   "name": "重点专业级别",
+   "ref_standard": "ZDZYJBDM",
+   "applies_to": "ODS_ZYSZSJ",
+   "remark": "地市级对应国标“其他”代码9。",
+   "items": [
+    {
+     "value": "1",
+     "label": "国家级",
+     "remark": null
+    },
+    {
+     "value": "2",
+     "label": "省部级",
+     "remark": null
+    },
+    {
+     "value": "9",
+     "label": "地市级",
+     "remark": null
+    }
+   ]
+  },
+  {
+   "code": "D05",
+   "name": "重点专业类型",
+   "ref_standard": "ZDZYLXDM",
+   "applies_to": "ODS_ZYSZSJ",
+   "remark": "可多选，多个值以英文逗号分隔。",
+   "items": [
+    {
+     "value": "1",
+     "label": "品牌",
+     "remark": null
+    },
+    {
+     "value": "2",
+     "label": "特色",
+     "remark": null
+    },
+    {
+     "value": "3",
+     "label": "高水平",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "一流",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "双优",
+     "remark": null
+    },
+    {
+     "value": "9",
+     "label": "其他",
+     "remark": null
+    }
+   ]
+  },
+  {
+   "code": "D06",
+   "name": "专业匹配地方产业情况",
+   "ref_standard": null,
+   "applies_to": "ODS_ZYSZSJ",
+   "remark": "来源于地方产业布局表；确实无匹配产业的选“专业无匹配产业”。",
+   "items": [
+    {
+     "value": null,
+     "label": "地方重点产业信息",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "地方重点产业无匹配选项，学校补充地方一般产业",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "专业无匹配产业",
+     "remark": null
+    }
+   ]
+  },
+  {
+   "code": "D07",
+   "name": "培养方式",
+   "ref_standard": null,
+   "applies_to": "ODS_KCJBSJ；ODS_SKXXSJ；ODS_XSJBSJ；ODS_XSXSSJ",
+   "remark": "普通班不需填写具体形式；其他类型须填写具体形式。",
+   "items": [
+    {
+     "value": null,
+     "label": "普通班",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "现代职教体系项目",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "现代学徒制",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "企业新型学徒制",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "现场工程师",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "订单班",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "其他",
+     "remark": null
+    }
+   ]
+  },
+  {
+   "code": "D08",
+   "name": "具体形式",
+   "ref_standard": null,
+   "applies_to": "ODS_KCJBSJ；ODS_SKXXSJ；ODS_XSJBSJ；ODS_XSXSSJ",
+   "remark": "现代职教体系项目填分段培养形式；现代学徒制、企业新型学徒制、现场工程师、订单班填合作企业名称；其他填学校自定形式。",
+   "items": [
+    {
+     "value": null,
+     "label": "“5+0”长学制",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "高职与本科“3+2”分段培养",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "高职与本科“3+3”分段培养",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "中职与本科“3+4”分段培养",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "中职与高职“3+3”分段培养",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "五年一贯制",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "高职“3+2”",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "中职与高职“2.5+2.5”分段培养",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "八年一贯制",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "高职“2+3”",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "预科“1+3”",
+     "remark": null
+    }
+   ]
+  },
+  {
+   "code": "D09",
+   "name": "生源类型（高职专科）",
+   "ref_standard": null,
+   "applies_to": "ODS_KCJBSJ；ODS_SKXXSJ；ODS_XSJBSJ；ODS_XSXSSJ",
+   "remark": "可多选，多个值以英文逗号分隔；“三校生”指中等专科学校、中等职业学校和中等技术学校毕业生。",
+   "items": [
+    {
+     "value": null,
+     "label": "本科毕业生",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "硕士研究生",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "博士研究生",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "三校生",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "普通高中生",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "五年一贯制第三年",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "五年一贯制第四年",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "中职与高职“3+3”分段培养",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "中职与高职分段培养(学生在前段学校培养)",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "高职“3+2”学生",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "高职“2+3”学生",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "扩招",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "社招",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "留学生",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "其他",
+     "remark": null
+    }
+   ]
+  },
+  {
+   "code": "D10",
+   "name": "生源类型（职业本科）",
+   "ref_standard": null,
+   "applies_to": null,
+   "remark": "可多选，多个值以英文逗号分隔。",
+   "items": [
+    {
+     "value": null,
+     "label": "本科毕业生",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "硕士研究生",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "博士研究生",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "三校生",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "普通高中生",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "五年一贯制专科生",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "高职与本科“3+2”分段培养",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "专转（升）本选拔考试专科生",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "中职与本科“3+4”分段培养",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "留学生",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "高职与本科“4+0”联合培养",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "高职与本科“3+2”或“5+0”分段培养(学生在前段学校培养)",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "其他",
+     "remark": null
+    }
+   ]
+  },
+  {
+   "code": "D11",
+   "name": "年级",
+   "ref_standard": null,
+   "applies_to": "ODS_KCJBSJ；ODS_SKXXSJ；ODS_XSJBSJ；ODS_XSXSSJ",
+   "remark": "按入学年份填写；公共选修课、混合班级可填“混合年级”。",
+   "items": [
+    {
+     "value": null,
+     "label": "2026级",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "2025级",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "2024级",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "2023级",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "2022级",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "2021级",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "2020级",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "2019级",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "2018级",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "混合年级",
+     "remark": null
+    }
+   ]
+  },
+  {
+   "code": "D12",
+   "name": "课程类型",
+   "ref_standard": "KCLXDM",
+   "applies_to": "ODS_KCJBSJ",
+   "remark": "A类为纯理论课，B类为理论+实践课，C类为纯实践课。",
+   "items": [
+    {
+     "value": "1",
+     "label": "A类",
+     "remark": null
+    },
+    {
+     "value": "2",
+     "label": "B类",
+     "remark": null
+    },
+    {
+     "value": "3",
+     "label": "C类",
+     "remark": null
+    }
+   ]
+  },
+  {
+   "code": "D13",
+   "name": "课程属性",
+   "ref_standard": null,
+   "applies_to": "ODS_KCJBSJ",
+   "remark": "按《教育部关于职业院校专业人才培养方案制订与实施工作的指导意见》划分。",
+   "items": [
+    {
+     "value": null,
+     "label": "公共基础课程",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "专业（技能）课程",
+     "remark": null
+    }
+   ]
+  },
+  {
+   "code": "D14",
+   "name": "公共基础课程",
+   "ref_standard": "GGKLBDM",
+   "applies_to": "ODS_KCJBSJ；ODS_JZGJBSJ",
+   "remark": "仅课程属性为公共基础课程时填写。",
+   "items": [
+    {
+     "value": null,
+     "label": "思想政治理论课",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "体育",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "军事理论与军训",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "心理健康教育",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "劳动教育",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "马克思主义理论类课",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "党史国史",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "中华优秀传统文化",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "社会主义先进文化",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "宪法法律",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "语文",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "数学",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "物理",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "化学",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "外语",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "健康教育",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "美育课程",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "国家安全教育",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "信息技术",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "艺术",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "职业发展与就业指导",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "创新创业教育",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "职业素养",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "科学探索",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "人工智能",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "其他",
+     "remark": null
+    }
+   ]
+  },
+  {
+   "code": "D15",
+   "name": "专业课程",
+   "ref_standard": null,
+   "applies_to": "ODS_KCJBSJ",
+   "remark": "仅课程属性为专业（技能）课程时填写。",
+   "items": [
+    {
+     "value": null,
+     "label": "专业基础课",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "专业核心课",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "专业拓展课",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "实践性教学环节",
+     "remark": null
+    }
+   ]
+  },
+  {
+   "code": "D16",
+   "name": "课程性质",
+   "ref_standard": "KCSXDM",
+   "applies_to": "ODS_KCJBSJ",
+   "remark": "按课程修读要求划分。",
+   "items": [
+    {
+     "value": "1",
+     "label": "必修课",
+     "remark": null
+    },
+    {
+     "value": "3",
+     "label": "专业选修课",
+     "remark": null
+    },
+    {
+     "value": "2",
+     "label": "公共选修课",
+     "remark": null
+    }
+   ]
+  },
+  {
+   "code": "D17",
+   "name": "开课学期",
+   "ref_standard": "XQDM",
+   "applies_to": "ODS_KCJBSJ；ODS_SKXXSJ",
+   "remark": "格式为“YYYY-YYYY-N学期”，N为1（秋季）或2（春季）；按学年顺延维护。",
+   "items": [
+    {
+     "value": "1",
+     "label": "2025-2026-1学期",
+     "remark": null
+    },
+    {
+     "value": "2",
+     "label": "2025-2026-2学期",
+     "remark": null
+    }
+   ]
+  },
+  {
+   "code": "D18",
+   "name": "精品课程级别",
+   "ref_standard": "JPKCJBDM",
+   "applies_to": "ODS_KCJBSJ",
+   "remark": "含在线精品课程、课程思政示范课等等级。",
+   "items": [
+    {
+     "value": "1",
+     "label": "国家级",
+     "remark": null
+    },
+    {
+     "value": "2",
+     "label": "省部级",
+     "remark": null
+    },
+    {
+     "value": "3",
+     "label": "校级",
+     "remark": null
+    },
+    {
+     "value": "9",
+     "label": "无",
+     "remark": null
+    }
+   ]
+  },
+  {
+   "code": "D19",
+   "name": "校内人员类别",
+   "ref_standard": null,
+   "applies_to": "ODS_JZGJBSJ",
+   "remark": "校内教师基本信息表使用。",
+   "items": [
+    {
+     "value": null,
+     "label": "专任教师",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "校内兼课教师",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "其他",
+     "remark": null
+    }
+   ]
+  },
+  {
+   "code": "D20",
+   "name": "教师类别",
+   "ref_standard": null,
+   "applies_to": "ODS_SKXXSJ；ODS_XXJXSJ；ODS_JSHJSJ；ODS_LWZZSJ；ODS_KYXMJBSJ；ODS_HXKTSJ；ODS_JSQYJZSJSJ；ODS_ZSCQSJ",
+   "remark": "授课、培训、获奖、论文、科研、实践、知识产权等表使用，含校外人员。",
+   "items": [
+    {
+     "value": null,
+     "label": "专任教师",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "校内兼课教师",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "校外教师",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "行业导师",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "银龄教师",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "外籍教师",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "其他",
+     "remark": null
+    }
+   ]
+  },
+  {
+   "code": "D21",
+   "name": "政治面貌",
+   "ref_standard": null,
+   "applies_to": "ODS_JZGJBSJ；ODS_XSJBSJ；ODS_XSXSSJ",
+   "remark": "按GB/T 4762及教育管理基础代码填写；非中国籍人员填“非中国籍”。",
+   "items": [
+    {
+     "value": null,
+     "label": "中共党员",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "中共预备党员",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "共青团员",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "民革",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "民盟",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "民建",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "民进",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "农工",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "致公",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "九三",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "台盟",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "无党派人士",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "群众",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "非中国籍",
+     "remark": null
+    }
+   ]
+  },
+  {
+   "code": "D22",
+   "name": "民族",
+   "ref_standard": "GB/T 3304",
+   "applies_to": "ODS_JZGJBSJ；ODS_XSJBSJ；ODS_XSXSSJ",
+   "remark": "按GB/T 3304填写规范名称；非中国籍人员填“非中国籍”。",
+   "items": [
+    {
+     "value": null,
+     "label": "汉族",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "蒙古族",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "回族",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "藏族",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "维吾尔族",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "苗族",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "彝族",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "壮族",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "布依族",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "朝鲜族",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "满族",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "侗族",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "瑶族",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "白族",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "土家族",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "哈尼族",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "哈萨克族",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "黎族",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "傣族",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "傈僳族",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "佤族",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "畲族",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "高山族",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "拉祜族",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "水族",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "东乡族",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "纳西族",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "景颇族",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "柯尔克孜族",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "土族",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "达斡尔族",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "仫佬族",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "羌族",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "布朗族",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "撒拉族",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "毛南族",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "仡佬族",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "锡伯族",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "阿昌族",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "普米族",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "塔吉克族",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "怒族",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "乌孜别克族",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "俄罗斯族",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "鄂温克族",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "德昂族",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "保安族",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "裕固族",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "京族",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "塔塔尔族",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "独龙族",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "鄂伦春族",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "赫哲族",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "门巴族",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "珞巴族",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "基诺族",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "穿青人",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "摩梭人",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "亻革家人",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "僜人",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "夏尔巴人",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "非中国籍",
+     "remark": null
+    }
+   ]
+  },
+  {
+   "code": "D23",
+   "name": "学历",
+   "ref_standard": null,
+   "applies_to": "ODS_JZGJBSJ",
+   "remark": "指国家承认的最高学历。",
+   "items": [
+    {
+     "value": null,
+     "label": "专科及以下",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "本科",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "硕士研究生",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "博士研究生",
+     "remark": null
+    }
+   ]
+  },
+  {
+   "code": "D24",
+   "name": "学位",
+   "ref_standard": null,
+   "applies_to": "ODS_JZGJBSJ",
+   "remark": "指国家承认的最高学位；无学位填“无”。",
+   "items": [
+    {
+     "value": null,
+     "label": "学士",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "硕士",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "博士",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "无",
+     "remark": null
+    }
+   ]
+  },
+  {
+   "code": "D25",
+   "name": "专业领域",
+   "ref_standard": null,
+   "applies_to": "ODS_JZGJBSJ",
+   "remark": "按学位授予门类或学科门类填写。",
+   "items": [
+    {
+     "value": null,
+     "label": "哲学",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "经济学",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "法学",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "教育学",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "文学",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "历史学",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "理学",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "工学",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "农学",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "医学",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "军事学",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "管理学",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "艺术学",
+     "remark": null
+    }
+   ]
+  },
+  {
+   "code": "D26",
+   "name": "专业技术职务等级",
+   "ref_standard": null,
+   "applies_to": null,
+   "remark": "按最高专业技术职务填写。",
+   "items": [
+    {
+     "value": null,
+     "label": "教授",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "副教授",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "讲师",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "助教",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "其他正高级",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "其他副高级",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "其他中级",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "其他初级",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "未评级",
+     "remark": null
+    }
+   ]
+  },
+  {
+   "code": "D27",
+   "name": "职业资格证书等级",
+   "ref_standard": null,
+   "applies_to": "ODS_JZGJBSJ",
+   "remark": "无证书填“无”。",
+   "items": [
+    {
+     "value": null,
+     "label": "高级",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "中级",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "初级",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "无等级",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "无",
+     "remark": null
+    }
+   ]
+  },
+  {
+   "code": "D28",
+   "name": "是否标志",
+   "ref_standard": "SFBZDM",
+   "applies_to": "ODS_ZYSZSJ；ODS_KCJBSJ；ODS_JZGJBSJ；ODS_JSHJSJ；ODS_KYXMJBSJ；ODS_HXKTSJ；ODS_ZSCQSJ；ODS_XSJBSJ；ODS_XSXSSJ",
+   "remark": "1=是，0=否。",
+   "items": [
+    {
+     "value": "1",
+     "label": "是",
+     "remark": null
+    },
+    {
+     "value": "0",
+     "label": "否",
+     "remark": null
+    }
+   ]
+  },
+  {
+   "code": "D29",
+   "name": "双师型教师等级",
+   "ref_standard": null,
+   "applies_to": "ODS_JZGJBSJ",
+   "remark": "非双师型教师填“否”。",
+   "items": [
+    {
+     "value": null,
+     "label": "高级",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "中级",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "初级",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "无等级",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "否",
+     "remark": null
+    }
+   ]
+  },
+  {
+   "code": "D30",
+   "name": "教学名师级别",
+   "ref_standard": null,
+   "applies_to": "ODS_JZGJBSJ",
+   "remark": "非教学名师填“否”。",
+   "items": [
+    {
+     "value": null,
+     "label": "国家级",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "省部级",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "地市级",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "院校级",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "否",
+     "remark": null
+    }
+   ]
+  },
+  {
+   "code": "D31",
+   "name": "专业带头人类型",
+   "ref_standard": null,
+   "applies_to": "ODS_JZGJBSJ",
+   "remark": "“双带头人”指党建带头人、专业带头人一肩挑。",
+   "items": [
+    {
+     "value": null,
+     "label": "“双带头人”",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "仅专业带头人",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "否",
+     "remark": null
+    }
+   ]
+  },
+  {
+   "code": "D32",
+   "name": "专业（群）负责人类型",
+   "ref_standard": null,
+   "applies_to": "ODS_JZGJBSJ",
+   "remark": "按实际任职情况填写。",
+   "items": [
+    {
+     "value": null,
+     "label": "否",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "专业负责人",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "专业群负责人",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "专业和专业群负责人",
+     "remark": null
+    }
+   ]
+  },
+  {
+   "code": "D33",
+   "name": "培训交流类型",
+   "ref_standard": null,
+   "applies_to": "ODS_XXJXSJ",
+   "remark": "按培训交流主要内容填写。",
+   "items": [
+    {
+     "value": null,
+     "label": "境内培训进修",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "境外培训进修",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "攻读博士",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "攻读硕士",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "境内交流",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "境外交流",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "企业或实训基地培训",
+     "remark": null
+    }
+   ]
+  },
+  {
+   "code": "D34",
+   "name": "培训形式",
+   "ref_standard": null,
+   "applies_to": "ODS_XXJXSJ",
+   "remark": "线下或线上。",
+   "items": [
+    {
+     "value": null,
+     "label": "线下",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "线上",
+     "remark": null
+    }
+   ]
+  },
+  {
+   "code": "D35",
+   "name": "培训交流级别",
+   "ref_standard": "JBDM",
+   "applies_to": "ODS_XXJXSJ",
+   "remark": "无级别培训填“无级别”。",
+   "items": [
+    {
+     "value": "10",
+     "label": "国家级",
+     "remark": null
+    },
+    {
+     "value": "20",
+     "label": "省部级",
+     "remark": null
+    },
+    {
+     "value": "30",
+     "label": "地市级",
+     "remark": null
+    },
+    {
+     "value": "60",
+     "label": "校级",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "无级别",
+     "remark": null
+    }
+   ]
+  },
+  {
+   "code": "D36",
+   "name": "派出部门级别",
+   "ref_standard": "JBDM",
+   "applies_to": "ODS_XXJXSJ；ODS_JSQYJZSJSJ",
+   "remark": "按派出部门（推荐部门）行政级别填写。",
+   "items": [
+    {
+     "value": "10",
+     "label": "国家级",
+     "remark": null
+    },
+    {
+     "value": "20",
+     "label": "省部级",
+     "remark": null
+    },
+    {
+     "value": "30",
+     "label": "地市级",
+     "remark": null
+    },
+    {
+     "value": "60",
+     "label": "校级",
+     "remark": null
+    }
+   ]
+  },
+  {
+   "code": "D37",
+   "name": "获奖级别",
+   "ref_standard": "JBDM",
+   "applies_to": "ODS_JSHJSJ",
+   "remark": "按颁奖单位行政级别填写。",
+   "items": [
+    {
+     "value": "10",
+     "label": "国家级",
+     "remark": null
+    },
+    {
+     "value": "20",
+     "label": "省部级",
+     "remark": null
+    },
+    {
+     "value": "30",
+     "label": "地市级",
+     "remark": null
+    }
+   ]
+  },
+  {
+   "code": "D38",
+   "name": "获奖等级",
+   "ref_standard": "JLDJDM",
+   "applies_to": "ODS_JSHJSJ",
+   "remark": "按奖项设置填写；未设等级填“无等级”。",
+   "items": [
+    {
+     "value": "1",
+     "label": "特等奖",
+     "remark": null
+    },
+    {
+     "value": "2",
+     "label": "一等奖",
+     "remark": null
+    },
+    {
+     "value": "3",
+     "label": "二等奖",
+     "remark": null
+    },
+    {
+     "value": "4",
+     "label": "三等奖",
+     "remark": null
+    },
+    {
+     "value": "5",
+     "label": "优秀奖",
+     "remark": null
+    },
+    {
+     "value": "7",
+     "label": "金奖",
+     "remark": null
+    },
+    {
+     "value": "8",
+     "label": "银奖",
+     "remark": null
+    },
+    {
+     "value": "9",
+     "label": "铜奖",
+     "remark": null
+    },
+    {
+     "value": "6",
+     "label": "无等级",
+     "remark": null
+    }
+   ]
+  },
+  {
+   "code": "D39",
+   "name": "奖项类别",
+   "ref_standard": null,
+   "applies_to": "ODS_JSHJSJ",
+   "remark": "按获奖内容所属领域填写。",
+   "items": [
+    {
+     "value": null,
+     "label": "党建思政",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "人才培养",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "科研与社会服务",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "信息化建设",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "国际交流",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "其他",
+     "remark": null
+    }
+   ]
+  },
+  {
+   "code": "D40",
+   "name": "获奖人顺序",
+   "ref_standard": null,
+   "applies_to": "ODS_JSHJSJ",
+   "remark": "指第一获奖人在获奖名单中的排序。",
+   "items": [
+    {
+     "value": null,
+     "label": "独立",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "第一",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "第二",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "第三",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "第四",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "第五",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "第六及以后",
+     "remark": null
+    }
+   ]
+  },
+  {
+   "code": "D41",
+   "name": "成果形式",
+   "ref_standard": null,
+   "applies_to": "ODS_LWZZSJ",
+   "remark": "论文或专著。",
+   "items": [
+    {
+     "value": null,
+     "label": "论文",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "专著",
+     "remark": null
+    }
+   ]
+  },
+  {
+   "code": "D42",
+   "name": "论文著作分类",
+   "ref_standard": null,
+   "applies_to": "ODS_LWZZSJ",
+   "remark": "按成果内容所属学科领域划分。",
+   "items": [
+    {
+     "value": null,
+     "label": "自然科学与技术",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "人文与社会科学",
+     "remark": null
+    }
+   ]
+  },
+  {
+   "code": "D43",
+   "name": "完成单位顺序",
+   "ref_standard": null,
+   "applies_to": "ODS_LWZZSJ",
+   "remark": "指本校在成果完成单位中的排序。",
+   "items": [
+    {
+     "value": null,
+     "label": "独立",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "第一",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "第二及以后",
+     "remark": null
+    }
+   ]
+  },
+  {
+   "code": "D44",
+   "name": "课题分类",
+   "ref_standard": null,
+   "applies_to": "ODS_KYXMJBSJ",
+   "remark": "按课题内容属性划分。",
+   "items": [
+    {
+     "value": null,
+     "label": "自然科学与技术",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "人文与社会科学",
+     "remark": null
+    }
+   ]
+  },
+  {
+   "code": "D45",
+   "name": "课题性质",
+   "ref_standard": null,
+   "applies_to": "ODS_KYXMJBSJ",
+   "remark": "按课题立项性质划分。",
+   "items": [
+    {
+     "value": null,
+     "label": "教研课题",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "科研课题",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "其他",
+     "remark": null
+    }
+   ]
+  },
+  {
+   "code": "D46",
+   "name": "研究状态",
+   "ref_standard": null,
+   "applies_to": "ODS_KYXMJBSJ；ODS_HXKTSJ",
+   "remark": "按当前研究进展填写。",
+   "items": [
+    {
+     "value": null,
+     "label": "立项",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "在研",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "结项",
+     "remark": null
+    }
+   ]
+  },
+  {
+   "code": "D47",
+   "name": "课题来源（纵向）",
+   "ref_standard": null,
+   "applies_to": "ODS_KYXMJBSJ",
+   "remark": "纵向科研项目按来源渠道填写。",
+   "items": [
+    {
+     "value": null,
+     "label": "党政部门",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "行业协会",
+     "remark": null
+    }
+   ]
+  },
+  {
+   "code": "D48",
+   "name": "课题来源（横向）",
+   "ref_standard": null,
+   "applies_to": "ODS_HXKTSJ",
+   "remark": "横向课题按委托方性质填写。",
+   "items": [
+    {
+     "value": null,
+     "label": "政府",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "企业",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "其他",
+     "remark": null
+    }
+   ]
+  },
+  {
+   "code": "D49",
+   "name": "课题级别",
+   "ref_standard": "JBDM",
+   "applies_to": "ODS_KYXMJBSJ",
+   "remark": "按立项部门行政级别填写。",
+   "items": [
+    {
+     "value": "10",
+     "label": "国家级",
+     "remark": null
+    },
+    {
+     "value": "20",
+     "label": "省部级",
+     "remark": null
+    },
+    {
+     "value": "30",
+     "label": "地市级",
+     "remark": null
+    }
+   ]
+  },
+  {
+   "code": "D50",
+   "name": "经费来源",
+   "ref_standard": "JFLYDM",
+   "applies_to": "ODS_KYXMJBSJ",
+   "remark": "按项目经费主要来源填写。",
+   "items": [
+    {
+     "value": null,
+     "label": "财政拨款",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "学校配套",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "企业资助",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "其他",
+     "remark": null
+    }
+   ]
+  },
+  {
+   "code": "D51",
+   "name": "鉴定结果",
+   "ref_standard": null,
+   "applies_to": "ODS_KYXMJBSJ；ODS_HXKTSJ",
+   "remark": "按结项鉴定结论填写。",
+   "items": [
+    {
+     "value": null,
+     "label": "优秀",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "良好",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "合格",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "不合格",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "通过",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "不通过",
+     "remark": null
+    }
+   ]
+  },
+  {
+   "code": "D52",
+   "name": "实践锻炼类型",
+   "ref_standard": "QYDLLXDM",
+   "applies_to": "ODS_JSQYJZSJSJ",
+   "remark": "企业一线实践对应国标“企业实践”；社会兼职对应“企业兼职”。",
+   "items": [
+    {
+     "value": "1",
+     "label": "企业一线实践",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "挂职锻炼",
+     "remark": null
+    },
+    {
+     "value": "2",
+     "label": "社会兼职",
+     "remark": null
+    }
+   ]
+  },
+  {
+   "code": "D53",
+   "name": "接收单位所在地",
+   "ref_standard": "GB/T 2260",
+   "applies_to": "ODS_JSQYJZSJSJ",
+   "remark": "按省级行政区划填写；境外单位填“国外”。",
+   "items": [
+    {
+     "value": null,
+     "label": "北京市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "天津市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "河北省",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "山西省",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "内蒙古自治区",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "辽宁省",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "吉林省",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "黑龙江省",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "上海市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "江苏省",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "浙江省",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "安徽省",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "福建省",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "江西省",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "山东省",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "河南省",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "湖北省",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "湖南省",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "广东省",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "广西壮族自治区",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "海南省",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "重庆市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "四川省",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "贵州省",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "云南省",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "西藏自治区",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "陕西省",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "甘肃省",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "青海省",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "宁夏回族自治区",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "新疆维吾尔自治区",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "台湾省",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "香港特别行政区",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "澳门特别行政区",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "国外",
+     "remark": null
+    }
+   ]
+  },
+  {
+   "code": "D54",
+   "name": "知识产权类型",
+   "ref_standard": null,
+   "applies_to": "ODS_ZSCQSJ",
+   "remark": "按知识产权权利类型填写。",
+   "items": [
+    {
+     "value": null,
+     "label": "软件著作权",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "实用新型专利",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "发明专利",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "外观设计",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "植物新品种",
+     "remark": null
+    }
+   ]
+  },
+  {
+   "code": "D55",
+   "name": "性别",
+   "ref_standard": null,
+   "applies_to": "ODS_JZGJBSJ；ODS_XSJBSJ；ODS_XSXSSJ",
+   "remark": "男或女。",
+   "items": [
+    {
+     "value": "1",
+     "label": "男",
+     "remark": null
+    },
+    {
+     "value": "2",
+     "label": "女",
+     "remark": null
+    }
+   ]
+  },
+  {
+   "code": "D56",
+   "name": "来自军队情况",
+   "ref_standard": null,
+   "applies_to": "ODS_XSJBSJ；ODS_XSXSSJ",
+   "remark": "非军人及退役军人填“否”。",
+   "items": [
+    {
+     "value": null,
+     "label": "否",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "复转军人",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "退役士兵",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "其他",
+     "remark": null
+    }
+   ]
+  },
+  {
+   "code": "D57",
+   "name": "学籍状态（在校生）",
+   "ref_standard": null,
+   "applies_to": "ODS_XSJBSJ",
+   "remark": "全日制高职在校生使用。",
+   "items": [
+    {
+     "value": null,
+     "label": "在读",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "毕业",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "肄业",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "结业",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "休学",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "辍学",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "退学",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "保留学籍",
+     "remark": null
+    }
+   ]
+  },
+  {
+   "code": "D58",
+   "name": "学籍状态（新生）",
+   "ref_standard": null,
+   "applies_to": "ODS_XSXSSJ",
+   "remark": "9月份入学高职新生使用。",
+   "items": [
+    {
+     "value": null,
+     "label": "保留入学资格",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "待报到",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "报到注册",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "休学",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "保留学籍",
+     "remark": null
+    }
+   ]
+  },
+  {
+   "code": "D59",
+   "name": "招生方式（高职专科）",
+   "ref_standard": null,
+   "applies_to": "ODS_XSJBSJ；ODS_XSXSSJ",
+   "remark": "按当年省级招生考试机构公布的招生方式填写。",
+   "items": [
+    {
+     "value": null,
+     "label": "基于高考直接招生",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "基于高考的“知识+技能”招生",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "综合评价招生",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "中高职贯通招生",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "对口高考招生",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "春季高考",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "单独考试招生",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "技能拔尖人才免试招生",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "面向社会人员招生",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "补充招生",
+     "remark": null
+    }
+   ]
+  },
+  {
+   "code": "D60",
+   "name": "招生方式（职业本科）",
+   "ref_standard": null,
+   "applies_to": null,
+   "remark": "按当年省级招生考试机构公布的招生方式填写。",
+   "items": [
+    {
+     "value": null,
+     "label": "基于高考直接招生",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "基于高考的“知识+技能”招生",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "综合评价招生",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "职教专本贯通培养招生",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "专转本考试招生",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "春季高考",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "对口高考招生",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "补充方式",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "联合招收港澳台学生",
+     "remark": null
+    }
+   ]
+  },
+  {
+   "code": "D61",
+   "name": "四辅人员情况",
+   "ref_standard": null,
+   "applies_to": "ODS_XSJBSJ；ODS_XSXSSJ",
+   "remark": "非四辅人员可不填。",
+   "items": [
+    {
+     "value": null,
+     "label": "退役军人",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "农民工",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "新型职业农民",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "下岗失业人员",
+     "remark": null
+    }
+   ]
+  },
+  {
+   "code": "D62",
+   "name": "是否残疾及残疾类别",
+   "ref_standard": null,
+   "applies_to": "ODS_XSJBSJ；ODS_XSXSSJ",
+   "remark": "无残疾填“否”；有残疾按残疾类别填写。",
+   "items": [
+    {
+     "value": null,
+     "label": "否",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "视力残疾",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "听力残疾",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "言语残疾",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "肢体残疾",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "智力残疾",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "精神残疾",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "多重残疾",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "其他残疾",
+     "remark": null
+    }
+   ]
+  },
+  {
+   "code": "D63",
+   "name": "国家（地区）",
+   "ref_standard": "GB/T 2659",
+   "applies_to": "ODS_JZGJBSJ；ODS_XSJBSJ；ODS_XSXSSJ",
+   "remark": "按GB/T 2659填写；中国学生填“中国”。",
+   "items": [
+    {
+     "value": null,
+     "label": "中国",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "台湾省",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "澳门特别行政区",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "香港特别行政区",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "阿富汗",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "阿尔巴尼亚",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "阿尔及利亚",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "安道尔",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "安哥拉",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "安提瓜和巴布达",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "阿根廷",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "亚美尼亚",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "澳大利亚",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "奥地利",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "阿塞拜疆",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "巴哈马",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "巴林",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "巴勒斯坦",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "孟加拉国",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "巴巴多斯",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "白俄罗斯",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "比利时",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "伯利兹",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "贝宁",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "不丹",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "玻利维亚",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "波黑",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "博茨瓦纳",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "巴西",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "文莱",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "保加利亚",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "布基纳法索",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "布隆迪",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "柬埔寨",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "喀麦隆",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "加拿大",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "佛得角",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "中非",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "乍得",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "智利",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "哥伦比亚",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "库克群岛",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "科摩罗",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "刚果（金）",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "刚果（布）",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "哥斯达黎加",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "克罗地亚",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "古巴",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "塞浦路斯",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "捷克",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "丹麦",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "吉布提",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "多米尼克",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "多米尼加",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "厄瓜多尔",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "埃及",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "萨尔瓦多",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "赤道几内亚",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "厄立特里亚",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "爱沙尼亚",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "埃塞俄比亚",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "斐济",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "芬兰",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "法国",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "加蓬",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "冈比亚",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "格鲁吉亚",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "德国",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "加纳",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "希腊",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "格林纳达",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "危地马拉",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "几内亚",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "几内亚比绍",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "圭亚那",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "海地",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "洪都拉斯",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "匈牙利",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "冰岛",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "印度",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "印度尼西亚",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "伊朗",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "伊拉克",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "爱尔兰",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "以色列",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "意大利",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "牙买加",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "日本",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "约旦",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "哈萨克斯坦",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "肯尼亚",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "基里巴斯",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "科威特",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "吉尔吉斯斯坦",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "老挝",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "拉脱维亚",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "黎巴嫩",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "莱索托",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "利比里亚",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "利比亚",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "列支敦士登",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "立陶宛",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "卢森堡",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "北马其顿",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "马绍尔群岛",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "马达加斯加",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "马拉维",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "马来西亚",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "马尔代夫",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "马里",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "马耳他",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "毛里塔尼亚",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "毛里求斯",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "墨西哥",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "密克罗尼西亚联邦",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "摩尔多瓦",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "摩纳哥",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "蒙古",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "黑山",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "摩洛哥",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "莫桑比克",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "缅甸",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "纳米比亚",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "瑙鲁",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "纽埃",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "尼泊尔",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "荷兰",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "新西兰",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "尼加拉瓜",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "尼日尔",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "尼日利亚",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "朝鲜",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "挪威",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "阿曼",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "巴基斯坦",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "帕劳",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "巴拿马",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "巴布亚新几内亚",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "巴拉圭",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "秘鲁",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "菲律宾",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "波兰",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "葡萄牙",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "卡塔尔",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "罗马尼亚",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "俄罗斯",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "卢旺达",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "圣基茨和尼维斯",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "圣卢西亚",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "圣文森特和格林纳丁斯",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "萨摩亚",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "圣马力诺",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "圣多美和普林西比",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "沙特阿拉伯",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "塞内加尔",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "塞尔维亚",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "塞舌尔",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "塞拉利昂",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "新加坡",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "斯洛伐克",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "斯洛文尼亚",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "所罗门群岛",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "索马里",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "南非",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "韩国",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "南苏丹",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "西班牙",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "斯里兰卡",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "苏丹",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "苏里南",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "斯威士兰",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "瑞典",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "瑞士",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "叙利亚",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "塔吉克斯坦",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "坦桑尼亚",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "泰国",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "多哥",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "汤加",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "特立尼达和多巴哥",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "突尼斯",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "土耳其",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "土库曼斯坦",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "图瓦卢",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "乌干达",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "乌克兰",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "阿联酋",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "英国",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "美国",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "乌拉圭",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "乌兹别克斯坦",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "瓦努阿图",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "梵蒂冈",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "委内瑞拉",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "越南",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "也门",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "赞比亚",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "津巴布韦",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "科特迪瓦",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "东帝汶",
+     "remark": null
+    }
+   ]
+  },
+  {
+   "code": "D64",
+   "name": "省份",
+   "ref_standard": "GB/T 2260",
+   "applies_to": "ODS_XSJBSJ；ODS_XSXSSJ",
+   "remark": "按GB/T 2260省级行政区划填写。",
+   "items": [
+    {
+     "value": null,
+     "label": "北京市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "天津市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "河北省",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "山西省",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "内蒙古自治区",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "辽宁省",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "吉林省",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "黑龙江省",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "上海市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "江苏省",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "浙江省",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "安徽省",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "福建省",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "江西省",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "山东省",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "河南省",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "湖北省",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "湖南省",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "广东省",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "广西壮族自治区",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "海南省",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "重庆市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "四川省",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "贵州省",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "云南省",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "西藏自治区",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "陕西省",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "甘肃省",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "青海省",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "宁夏回族自治区",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "新疆维吾尔自治区",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "台湾省",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "香港特别行政区",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "澳门特别行政区",
+     "remark": null
+    }
+   ]
+  },
+  {
+   "code": "D65",
+   "name": "地市",
+   "ref_standard": "GB/T 2260",
+   "applies_to": "ODS_XSJBSJ；ODS_XSXSSJ",
+   "remark": "按GB/T 2260地级行政区划填写，全量值见Excel数据字典。",
+   "items": [
+    {
+     "value": null,
+     "label": "东城区",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "西城区",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "朝阳区",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "丰台区",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "石景山区",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "海淀区",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "门头沟区",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "房山区",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "通州区",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "顺义区",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "昌平区",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "大兴区",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "怀柔区",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "平谷区",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "密云区",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "延庆区",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "和平区",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "河东区",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "河西区",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "南开区",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "河北区",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "红桥区",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "东丽区",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "西青区",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "津南区",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "北辰区",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "武清区",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "宝坻区",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "滨海新区",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "宁河区",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "静海区",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "蓟州区",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "石家庄市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "唐山市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "秦皇岛市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "邯郸市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "邢台市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "保定市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "张家口市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "承德市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "沧州市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "廊坊市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "衡水市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "雄安新区",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "太原市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "大同市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "阳泉市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "长治市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "晋城市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "朔州市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "晋中市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "运城市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "忻州市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "临汾市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "吕梁市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "呼和浩特市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "包头市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "乌海市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "赤峰市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "通辽市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "鄂尔多斯市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "呼伦贝尔市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "巴彦淖尔市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "乌兰察布市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "兴安盟",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "锡林郭勒盟",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "阿拉善盟",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "沈阳市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "大连市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "鞍山市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "抚顺市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "本溪市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "丹东市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "锦州市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "营口市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "阜新市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "辽阳市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "盘锦市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "铁岭市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "朝阳市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "葫芦岛市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "长春市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "吉林市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "四平市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "辽源市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "通化市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "白山市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "松原市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "白城市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "延边朝鲜族自治州",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "哈尔滨市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "齐齐哈尔市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "鸡西市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "鹤岗市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "双鸭山市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "大庆市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "伊春市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "佳木斯市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "七台河市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "牡丹江市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "黑河市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "绥化市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "大兴安岭地区",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "黄浦区",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "徐汇区",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "长宁区",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "静安区",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "普陀区",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "虹口区",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "杨浦区",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "闵行区",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "宝山区",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "嘉定区",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "浦东新区",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "金山区",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "松江区",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "青浦区",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "奉贤区",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "崇明区",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "南京市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "无锡市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "徐州市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "常州市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "苏州市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "南通市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "连云港市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "淮安市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "盐城市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "扬州市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "镇江市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "泰州市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "宿迁市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "杭州市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "宁波市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "温州市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "嘉兴市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "湖州市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "绍兴市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "金华市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "衢州市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "舟山市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "台州市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "丽水市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "合肥市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "芜湖市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "蚌埠市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "淮南市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "马鞍山市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "淮北市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "铜陵市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "安庆市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "黄山市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "滁州市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "阜阳市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "宿州市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "六安市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "亳州市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "池州市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "宣城市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "福州市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "厦门市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "莆田市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "三明市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "泉州市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "漳州市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "南平市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "龙岩市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "宁德市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "南昌市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "景德镇市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "萍乡市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "九江市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "新余市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "鹰潭市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "赣州市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "吉安市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "宜春市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "抚州市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "上饶市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "济南市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "青岛市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "淄博市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "枣庄市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "东营市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "烟台市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "潍坊市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "济宁市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "泰安市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "威海市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "日照市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "临沂市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "德州市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "聊城市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "滨州市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "菏泽市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "郑州市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "开封市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "洛阳市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "平顶山市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "安阳市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "鹤壁市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "新乡市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "焦作市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "濮阳市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "许昌市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "漯河市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "三门峡市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "南阳市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "商丘市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "信阳市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "周口市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "驻马店市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "济源市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "武汉市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "黄石市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "十堰市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "宜昌市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "襄阳市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "鄂州市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "荆门市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "孝感市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "荆州市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "黄冈市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "咸宁市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "随州市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "恩施土家族苗族自治州",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "仙桃市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "潜江市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "天门市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "神农架林区",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "长沙市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "株洲市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "湘潭市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "衡阳市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "邵阳市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "岳阳市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "常德市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "张家界市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "益阳市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "郴州市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "永州市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "怀化市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "娄底市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "湘西土家族苗族自治州",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "广州市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "韶关市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "深圳市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "珠海市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "汕头市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "佛山市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "江门市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "湛江市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "茂名市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "肇庆市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "惠州市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "梅州市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "汕尾市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "河源市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "阳江市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "清远市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "东莞市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "中山市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "潮州市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "揭阳市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "云浮市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "南宁市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "柳州市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "桂林市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "梧州市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "北海市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "防城港市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "钦州市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "贵港市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "玉林市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "百色市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "贺州市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "河池市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "来宾市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "崇左市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "海口市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "三亚市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "三沙市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "儋州市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "五指山市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "琼海市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "文昌市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "万宁市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "东方市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "定安县",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "屯昌县",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "澄迈县",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "临高县",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "白沙黎族自治县",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "昌江黎族自治县",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "乐东黎族自治县",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "陵水黎族自治县",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "保亭黎族苗族自治县",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "琼中黎族苗族自治县",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "万州区",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "涪陵区",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "渝中区",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "大渡口区",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "沙坪坝区",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "九龙坡区",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "南岸区",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "北碚区",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "綦江区",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "大足区",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "巴南区",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "黔江区",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "长寿区",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "江津区",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "合川区",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "永川区",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "南川区",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "璧山区",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "铜梁区",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "潼南区",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "荣昌区",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "开州区",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "梁平区",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "武隆区",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "两江新区",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "城口县",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "丰都县",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "垫江县",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "忠县",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "云阳县",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "奉节县",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "巫山县",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "巫溪县",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "石柱土家族自治县",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "秀山土家族苗族自治县",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "酉阳土家族苗族自治县",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "彭水苗族土家族自治县",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "成都市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "自贡市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "攀枝花市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "泸州市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "德阳市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "绵阳市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "广元市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "遂宁市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "内江市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "乐山市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "南充市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "眉山市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "宜宾市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "广安市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "达州市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "雅安市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "巴中市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "资阳市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "阿坝藏族羌族自治州",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "甘孜藏族自治州",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "凉山彝族自治州",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "贵阳市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "六盘水市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "遵义市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "安顺市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "毕节市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "铜仁市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "黔西南布依族苗族自治州",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "黔东南苗族侗族自治州",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "黔南布依族苗族自治州",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "昆明市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "曲靖市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "玉溪市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "保山市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "昭通市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "丽江市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "普洱市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "临沧市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "楚雄彝族自治州",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "红河哈尼族彝族自治州",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "文山壮族苗族自治州",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "西双版纳傣族自治州",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "大理白族自治州",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "德宏傣族景颇族自治州",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "怒江傈僳族自治州",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "迪庆藏族自治州",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "拉萨市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "日喀则市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "昌都市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "林芝市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "山南市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "那曲市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "阿里地区",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "西安市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "铜川市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "宝鸡市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "咸阳市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "渭南市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "延安市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "汉中市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "榆林市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "安康市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "商洛市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "兰州市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "嘉峪关市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "金昌市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "白银市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "天水市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "武威市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "张掖市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "平凉市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "酒泉市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "庆阳市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "定西市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "陇南市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "临夏回族自治州",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "甘南藏族自治州",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "西宁市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "海东市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "海北藏族自治州",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "黄南藏族自治州",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "海南藏族自治州",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "果洛藏族自治州",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "玉树藏族自治州",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "海西蒙古族藏族自治州",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "银川市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "石嘴山市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "吴忠市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "固原市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "中卫市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "乌鲁木齐市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "克拉玛依市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "吐鲁番市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "哈密市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "昌吉回族自治州",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "博尔塔拉蒙古自治州",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "巴音郭楞蒙古自治州",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "阿克苏地区",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "克孜勒苏柯尔克孜自治州",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "喀什地区",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "和田地区",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "伊犁哈萨克自治州",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "塔城地区",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "阿勒泰地区",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "第八师石河子市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "第一师阿拉尔市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "第三师图木舒克市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "第六师五家渠市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "第十师北屯市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "第二师铁门关市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "第五师双河市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "第四师可克达拉市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "第十四师昆玉市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "第七师胡杨河市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "第十三师新星市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "第九师白杨市",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "第十一师",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "第十二师",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "台湾省",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "香港特别行政区",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "澳门特别行政区",
+     "remark": null
+    }
+   ]
+  },
+  {
+   "code": "D66",
+   "name": "专业大类",
+   "ref_standard": null,
+   "applies_to": "ODS_ZYSZSJ",
+   "remark": "按教育部《职业教育专业目录》19个专业大类填写。",
+   "items": [
+    {
+     "value": null,
+     "label": "农林牧渔大类",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "资源环境与安全大类",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "能源动力与材料大类",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "土木建筑大类",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "水利大类",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "装备制造大类",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "生物与化工大类",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "轻工纺织大类",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "食品药品与粮食大类",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "交通运输大类",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "电子信息大类",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "医药卫生大类",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "财经商贸大类",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "旅游大类",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "文化艺术大类",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "新闻传播大类",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "教育与体育大类",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "公安与司法大类",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "公共管理与服务大类",
+     "remark": null
+    }
+   ]
+  },
+  {
+   "code": "D67",
+   "name": "服务类型",
+   "ref_standard": null,
+   "applies_to": "ODS_HXKTSJ",
+   "remark": "横向课题技术服务类型。",
+   "items": [
+    {
+     "value": null,
+     "label": "技术开发",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "技术转让",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "技术许可",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "技术咨询",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "技术服务",
+     "remark": null
+    }
+   ]
+  },
+  {
+   "code": "D68",
+   "name": "授课任务",
+   "ref_standard": null,
+   "applies_to": "ODS_SKXXSJ",
+   "remark": "主讲或辅教。",
+   "items": [
+    {
+     "value": null,
+     "label": "主讲",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "辅教",
+     "remark": null
+    }
+   ]
+  },
+  {
+   "code": "D69",
+   "name": "场所位置",
+   "ref_standard": "SKDDLBDM",
+   "applies_to": "ODS_SKXXSJ",
+   "remark": "校内对应国标8（校内实践教学场所），校外对应9（校外实践教学场所）。",
+   "items": [
+    {
+     "value": "8",
+     "label": "校内",
+     "remark": null
+    },
+    {
+     "value": "9",
+     "label": "校外",
+     "remark": null
+    }
+   ]
+  },
+  {
+   "code": "D70",
+   "name": "对应招生批次",
+   "ref_standard": null,
+   "applies_to": "ODS_XSXSSJ",
+   "remark": "按省级招生考试机构当年公布批次填写，代码表由招生就业处每年维护。",
+   "items": [
+    {
+     "value": null,
+     "label": "联合招收华侨港澳台学生本科批",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "本科批",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "本科特控批",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "单招批",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "专科批",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "专科提前批",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "专转本（退役大学生士兵、技能大赛等）",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "专转本",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "贯通招生",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "专科批（定向培养军士）",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "自主招生",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "分类考试专科批（中职毕业生）",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "分类考试专科批（普通高中毕业生）",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "分类考试本科批（中职毕业生）",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "对口招生专科批",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "职教专本贯通培养招生",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "对口招生本科批",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "单招批（退役士兵）",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "单招批（普通高中毕业生）",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "单招批（中职毕业生）",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "专转本（原建档立卡贫困家庭考生）",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "中本贯通招生",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "对口招生高本贯通批",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "本科批（民族专项）",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "专科批（民族专项）",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "专转本（专项计划）",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "专转本（建档立卡）",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "职教高考",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "三校生高考",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "春季高考",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "高职与本科分段培养",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "专转本（五年一贯制高职<高师>）",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "对口招生专科第二批",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "高职提前招生批",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "专转本（退役大学生士兵）",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "专转本（免文化课考试退役士兵）",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "专转本（非免试退役士兵）",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "分类考试（乡村医生）",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "分类考试（中职）",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "分类考试（革命老区建档立卡）",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "分类考试（退役军人）",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "分类考试（普通高中）",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "对口招生（乡村医生）",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "对口招生",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "分类考试专科批（免试类）",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "分类考试本科批（中职对口类）",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "分类考试专科批（特殊群体类）",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "分类考试专科批（普高类）",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "分类考试专科批（中职对口类）",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "专转本（其他专项批次）",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "春季高考本科批",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "专科批（3+2对口贯通分段培养）",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "专科批（专项计划）",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "综合评价招生",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "春季高考（专项计划）",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "专转本（3+2对口贯通分段培养）",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "专转本（校荐生）",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "专转本（自荐生）",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "春季高考专科批",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "技能高考专科批",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "技能高考本科批",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "专转本（三二分段）",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "本科特控批（地方专项）",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "自主招生批",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "春季高考专科批（普通高中）",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "本科批（农村教师专项）",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "本科批（农村卫生人才专项）",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "春季高考本科批（中职毕业生）",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "专科批（农村卫生人才专项）",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "春季高考专科批（中职毕业生）",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "春季高考专科批（中职毕业生<西藏新疆>）",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "春季高考专科批（中职毕业生<退役士兵>）",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "本科批（军队提前）",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "本科批（边防子女预科班）",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "对口招生专科批（免试）",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "单招批（退役军人考生）",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "单招批（普通考生）",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "对口招生专科批（综合类）",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "对口招生专科批（技能类）",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "对口招生本科批（普通考生）",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "单招批（免试）",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "对口招生本科批（免试）",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "本科批（国家专项）",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "分类考试专科批",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "分类考试本科批",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "分类考试（高职专项〈退役士兵〉）",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "分类考试专科批（贯通转段）",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "分类考试本科批（贯通转段）",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "分类考试（普高艺术类）",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "分类考试专科批（普高普通类）",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "分类考试专本贯通批（普高普通类）",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "分类考试（高中类）",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "分类考试（中职类）",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "分类考试（专项类）",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "职教高考专科批",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "职教高考本科批",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "本科特控批（民族专项）",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "分类考试（技能大赛）",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "分类考试（三校生）",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "分类考试专科批（中职升学考试）",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "分类考试本科批（中职升学考试）",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "分类考试招生（综合评价）",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "本科批（其他少数民族紧缺人才培养专项）",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "专科批（建档立卡专项）",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "本科批（地方农村专项）",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "本科批（藏区少数民族紧缺人才培养专项）",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "专科批（革命老区专项）",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "本科批（建档立卡专项）",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "本科批（革命老区专项）",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "专科批（地方农村专项）",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "专科批（藏区少数民族紧缺人才培养专项）",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "专科批（其他少数民族紧缺人才培养专项）",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "分类考试",
+     "remark": null
+    },
+    {
+     "value": null,
+     "label": "三校生升高职批",
+     "remark": null
+    }
+   ]
+  }
+ ]
+}

@@ -1,0 +1,43 @@
+# 系统
+.DS_Store
+Thumbs.db
+
+# 环境变量（保留 .env.example）
+.env
+.env.*
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/
+.coverage
+htmlcov/
+*.egg-info/
+dist/
+build/
+
+# 页面原型
+docs/datacollect/
+
+# 上传文件
+storage/
+
+# Node / Next.js
+node_modules/
+.next/
+out/
+*.tsbuildinfo
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# 编辑器个人文件（保留项目级设置）
+.idea/
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+*.swp
