@@ -30,7 +30,7 @@ export default function MyFillPage() {
   }, [filter]);
 
   return (
-    <div className="mx-auto max-w-[1600px] p-5 xl:p-6">
+    <div className="mx-auto max-w-400 p-5 xl:p-6">
       <PageIntro
         title="我的填报"
         badge="2025—2026-1"
@@ -53,10 +53,10 @@ export default function MyFillPage() {
         <section className="rounded-lg border border-zinc-200 bg-white p-5 shadow-sm">
           <div className="flex flex-col gap-5 md:flex-row md:items-center">
             <div
-              className="relative flex size-[116px] shrink-0 items-center justify-center rounded-full"
+              className="relative flex size-29 shrink-0 items-center justify-center rounded-full"
               style={{ background: "conic-gradient(#18181b 0 71%, #f4f4f5 71% 100%)" }}
             >
-              <div className="flex size-[94px] flex-col items-center justify-center rounded-full bg-white">
+              <div className="flex size-23.5 flex-col items-center justify-center rounded-full bg-white">
                 <span className="text-[27px] leading-none font-semibold">
                   71<span className="text-sm font-medium text-zinc-400">%</span>
                 </span>
@@ -104,7 +104,7 @@ export default function MyFillPage() {
         }
       >
         <div className="overflow-x-auto">
-          <table className="w-full min-w-[720px] text-left text-[12px]">
+          <table className="w-full min-w-180 text-left text-[12px]">
             <thead className="bg-zinc-50 text-[11px] text-zinc-500">
               <tr>
                 <th className="px-4 py-2.5 font-medium">数据表 / 填报任务</th>

@@ -26,7 +26,7 @@ export default function AiParsePage() {
   const visible = onlyHints ? rows.filter((row) => row[9] === "提示") : rows;
 
   return (
-    <div className="mx-auto max-w-[1600px] p-5 xl:p-6">
+    <div className="mx-auto max-w-400 p-5 xl:p-6">
       <PageIntro
         title="文件解析入库"
         badge="大模型驱动"
@@ -104,7 +104,7 @@ export default function AiParsePage() {
         }
       >
         <div className="overflow-x-auto">
-          <table className="w-full min-w-[900px] text-left text-[12px]">
+          <table className="w-full min-w-225 text-left text-[12px]">
             <thead className="bg-zinc-50 text-[11px] text-zinc-500">
               <tr>
                 {["工号", "姓名", "培训名称", "培训类型", "学时", "开始日期", "结束日期", "结业证书编号", "置信度", "状态"].map((head) => (

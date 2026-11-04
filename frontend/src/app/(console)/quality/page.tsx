@@ -15,7 +15,7 @@ export default function QualityPage() {
   const visible = useMemo(() => logs.filter((row) => level === "全部级别" || row[1] === level), [level]);
 
   return (
-    <div className="mx-auto max-w-[1600px] p-5 xl:p-6">
+    <div className="mx-auto max-w-400 p-5 xl:p-6">
       <PageIntro
         title="采集日志与数据质量"
         badge="暂无异常"
@@ -50,7 +50,7 @@ export default function QualityPage() {
       </div>
       <Panel className="mt-4" title="异常与校验失败明细">
         <div className="overflow-x-auto">
-          <table className="w-full min-w-[760px] text-left text-[12px]">
+          <table className="w-full min-w-190 text-left text-[12px]">
             <thead className="bg-zinc-50 text-[11px] text-zinc-500">
               <tr>
                 {["级别", "数据表 / 字段", "异常说明", "影响记录", "最近发生", "状态", "操作"].map((head) => (

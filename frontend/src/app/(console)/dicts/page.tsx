@@ -255,7 +255,7 @@ export default function DictsPage() {
   }
 
   if (phase === "boot") {
-    return <div className="grid min-h-[320px] place-items-center text-sm text-zinc-400">正在加载字典</div>;
+    return <div className="grid min-h-80 place-items-center text-sm text-zinc-400">正在加载字典</div>;
   }
 
   if (phase === "auth") {

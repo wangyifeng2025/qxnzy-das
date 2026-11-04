@@ -62,10 +62,10 @@ function ShellFrame({ user, children }: { user: SessionUser; children: React.Rea
 
   return (
     <div className="flex h-screen w-full overflow-hidden bg-[#f7f7f8] text-zinc-900">
-      <aside className="hidden h-full w-[236px] shrink-0 flex-col border-r border-zinc-200 bg-white lg:flex">
+      <aside className="hidden h-full w-59 shrink-0 flex-col border-r border-zinc-200 bg-white lg:flex">
         <div className="flex h-16 items-center gap-3 border-b border-zinc-100 px-5">
           <div className="flex size-9 items-center justify-center rounded-lg bg-zinc-900 text-white">
-            <Database className="size-[18px]" aria-hidden="true" />
+            <Database className="size-4.5" aria-hidden="true" />
           </div>
           <div className="min-w-0">
             <p className="text-[9px] font-semibold tracking-[0.14em] text-zinc-400">QIANXINAN VOCATIONAL</p>

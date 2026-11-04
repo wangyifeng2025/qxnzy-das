@@ -10,7 +10,7 @@ const runs: string[][] = [];
 export default function ApiTasksPage() {
   const toast = useToast();
   return (
-    <div className="mx-auto max-w-[1600px] p-5 xl:p-6">
+    <div className="mx-auto max-w-400 p-5 xl:p-6">
       <PageIntro
         title="API 采集任务"
         badge="自动采集渠道"
@@ -29,7 +29,7 @@ export default function ApiTasksPage() {
       </div>
       <Panel className="mt-4" title="采集任务列表" description="按业务系统和数据表配置自动同步规则">
         <div className="overflow-x-auto">
-          <table className="w-full min-w-[860px] text-left text-[12px]">
+          <table className="w-full min-w-215 text-left text-[12px]">
             <thead className="bg-zinc-50 text-[11px] text-zinc-500">
               <tr>
                 {["任务 / 数据源", "目标数据表", "调度周期", "最近运行", "本次拉取", "状态", "操作"].map((head) => (

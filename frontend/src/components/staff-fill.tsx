@@ -348,7 +348,7 @@ export function StaffFill() {
   const readonly = !meta.can_submit;
 
   return (
-    <div className="mx-auto max-w-[1600px] p-5 xl:p-6">
+    <div className="mx-auto max-w-400 p-5 xl:p-6">
       <section className="overflow-hidden rounded-lg border border-zinc-200 bg-white shadow-sm">
         <div className="flex flex-wrap items-start justify-between gap-3 border-b border-zinc-100 px-5 py-4">
           <div>
@@ -391,7 +391,7 @@ export function StaffFill() {
             </div>
           ) : (
             <div className="overflow-hidden rounded-lg border border-zinc-200">
-              <table className="w-full min-w-[860px] text-[11px]">
+              <table className="w-full min-w-215 text-[11px]">
                 <thead className="bg-zinc-50 text-[10px] text-zinc-500">
                   <tr>
                     {["教工号", "姓名", "性别", "院系部名称", "人员类别", "学历", "身份证号", "采集时间", "操作"].map((head) => (
@@ -440,7 +440,7 @@ export function StaffFill() {
       {editing ? (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <button type="button" aria-label="关闭" className="absolute inset-0 bg-zinc-950/40" onClick={() => setEditing(null)} />
-          <div className="relative flex max-h-[88vh] w-full max-w-[920px] flex-col overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-2xl">
+          <div className="relative flex max-h-[88vh] w-full max-w-230 flex-col overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-2xl">
             <div className="flex items-start justify-between border-b border-zinc-100 px-5 py-4">
               <div>
                 <h3 className="text-sm font-semibold">{editing === "new" ? "新增教职工基本信息" : readonly ? "查看教职工基本信息" : "编辑教职工基本信息"}</h3>

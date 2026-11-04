@@ -101,10 +101,10 @@ function LoginForm() {
             <br />
             <span className="text-zinc-400">数据采集系统</span>
           </h1>
-          <p className="mt-4 max-w-[380px] text-[13px] leading-relaxed text-zinc-400">
+          <p className="mt-4 max-w-95 text-[13px] leading-relaxed text-zinc-400">
             统一采集 12 张业务数据表，按「教师—部门—学校」三级数据权限管理填报、审核与开放接口，让每一份数据都有明确的责任边界。
           </p>
-          <div className="mt-10 max-w-[400px] space-y-3">
+          <div className="mt-10 max-w-100 space-y-3">
             {[
               { icon: UserRound, title: "教师 · 管好自己的数据", text: "本人基本信息、培训、获奖、论文、科研、实践与知识产权" },
               { icon: Building2, title: "部门管理员 · 管好本部门数据", text: "本部门教师审核、代填、批量导入与填报进度统计" },
@@ -132,10 +132,10 @@ function LoginForm() {
       </aside>
 
       <main className="flex min-w-0 flex-1 items-center justify-center overflow-y-auto">
-        <div className="w-full max-w-[420px] px-6 py-10">
+        <div className="w-full max-w-105 px-6 py-10">
           <div className="mb-8 flex items-center gap-3 lg:hidden">
             <div className="flex size-9 items-center justify-center rounded-lg bg-zinc-900 text-white">
-              <Database className="size-[18px]" aria-hidden="true" />
+              <Database className="size-4.5" aria-hidden="true" />
             </div>
             <p className="text-[14px] font-semibold tracking-tight">黔西南职院数据采集系统</p>
           </div>

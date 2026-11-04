@@ -12,7 +12,7 @@ const activities: string[][] = [];
 export default function HomePage() {
   const toast = useToast();
   return (
-    <div className="mx-auto max-w-[1600px] p-5 xl:p-6">
+    <div className="mx-auto max-w-400 p-5 xl:p-6">
       <PageIntro
         title="采集总览"
         badge="全校视角"
@@ -44,7 +44,7 @@ export default function HomePage() {
       <div className="mt-4 grid grid-cols-1 gap-4 xl:grid-cols-[minmax(0,1.4fr)_360px]">
         <Panel title="12 张数据表采集进度" description="统计口径：有效记录数 / 本学期应采集记录数">
           <div className="overflow-x-auto">
-            <table className="w-full min-w-[640px] text-left text-[12px]">
+            <table className="w-full min-w-160 text-left text-[12px]">
               <thead className="bg-zinc-50 text-[11px] text-zinc-500">
                 <tr>
                   <th className="px-4 py-2.5 font-medium">数据表</th>

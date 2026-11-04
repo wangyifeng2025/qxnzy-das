@@ -24,7 +24,7 @@ export default function ReviewPage() {
   );
 
   return (
-    <div className="mx-auto max-w-[1600px] p-5 xl:p-6">
+    <div className="mx-auto max-w-400 p-5 xl:p-6">
       <PageIntro
         title="审核与批量导入"
         badge="部门管理员"
@@ -153,7 +153,7 @@ export default function ReviewPage() {
       {tab === "审核记录" ? (
         <Panel className="mt-4" title="审核记录" description="近 30 天本系部审核操作留痕">
           <div className="overflow-x-auto">
-            <table className="w-full min-w-[760px] text-left text-[12px]">
+            <table className="w-full min-w-190 text-left text-[12px]">
               <thead className="bg-zinc-50 text-[11px] text-zinc-500">
                 <tr>
                   {["审核单号", "提交教师", "数据表", "审核结果", "审核意见", "审核人", "审核时间"].map((head) => (

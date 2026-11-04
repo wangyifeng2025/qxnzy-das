@@ -23,7 +23,7 @@ export default function SchemaPage() {
   }))), ...extra];
 
   return (
-    <div className="mx-auto max-w-[1600px] p-5 xl:p-6">
+    <div className="mx-auto max-w-400 p-5 xl:p-6">
       <PageIntro
         title="数据表与字段管理"
         badge="数据标准 v2.4.1"
@@ -48,7 +48,7 @@ export default function SchemaPage() {
       </div>
       <div className="mt-4 grid gap-4 lg:grid-cols-[280px_minmax(0,1fr)]">
         <Panel title="数据表目录" description="最近发布 2026-10-28">
-          <ul className="max-h-[640px] overflow-y-auto">
+          <ul className="max-h-160 overflow-y-auto">
             {DATA_TABLES.map((item) => (
               <li key={item.id}>
                 <button type="button" onClick={() => { setTableId(item.id); setExtra([]); }} className={`w-full px-4 py-3 text-left ${item.id === table.id ? "bg-zinc-100" : "hover:bg-zinc-50"}`}>
@@ -61,7 +61,7 @@ export default function SchemaPage() {
         </Panel>
         <Panel title={table.name} description={`${table.code} · ${table.dept} · ${table.collected} 条`}>
           <div className="overflow-x-auto">
-            <table className="w-full min-w-[680px] text-left text-[12px]">
+            <table className="w-full min-w-170 text-left text-[12px]">
               <thead className="bg-zinc-50 text-[11px] text-zinc-500">
                 <tr>
                   {["字段名称", "字段编码", "数据类型", "必填", "来源渠道", "填报状态"].map((head) => (

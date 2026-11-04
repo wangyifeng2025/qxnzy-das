@@ -18,7 +18,7 @@ export default function OpenApiPage() {
   const visible = apis.filter((item) => auth === "全部" || item[2] === auth);
 
   return (
-    <div className="mx-auto max-w-[1600px] p-5 xl:p-6">
+    <div className="mx-auto max-w-400 p-5 xl:p-6">
       <PageIntro
         title="对外数据接口"
         badge="Open API v1"
@@ -53,7 +53,7 @@ export default function OpenApiPage() {
           </select>
         }>
           <div className="overflow-x-auto">
-            <table className="w-full min-w-[760px] text-left text-[12px]">
+            <table className="w-full min-w-190 text-left text-[12px]">
               <thead className="bg-zinc-50 text-[11px] text-zinc-500">
                 <tr>
                   {["接口 / 数据表", "请求路径", "授权方式", "今日调用", "平均延迟", "操作"].map((head) => (

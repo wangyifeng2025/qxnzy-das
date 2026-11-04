@@ -203,14 +203,14 @@ export default function RolesPage() {
   }
 
   if (phase === "boot") {
-    return <div className="grid min-h-[320px] place-items-center text-sm text-zinc-400">正在加载角色</div>;
+    return <div className="grid min-h-80 place-items-center text-sm text-zinc-400">正在加载角色</div>;
   }
   if (phase === "auth") return <ApiConnect title="角色管理" />;
 
   const draft = editing && editing !== "new" ? editing : null;
 
   return (
-    <div className="mx-auto max-w-[1180px] space-y-4 p-5">
+    <div className="mx-auto max-w-295 space-y-4 p-5">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
           <h1 className="text-[19px] font-semibold tracking-tight text-zinc-900">角色管理</h1>
@@ -235,7 +235,7 @@ export default function RolesPage() {
           </div>
         </div>
         <div className="overflow-x-auto">
-          <table className="w-full min-w-[900px] border-collapse text-left">
+          <table className="w-full min-w-225 border-collapse text-left">
             <thead>
               <tr className="border-b border-zinc-100 bg-zinc-50/60 text-[11px] text-zinc-500">
                 {["角色名称", "角色编码", "数据范围", "关联用户数", "权限数", "更新时间"].map((head) => <th key={head} className="px-4 py-2.5 font-medium">{head}</th>)}
@@ -271,7 +271,7 @@ export default function RolesPage() {
           <p className="mt-1 text-[11px] text-zinc-400">按当前权限配置生成。信息中心管理员的权限由系统固定，不能在此修改。</p>
         </div>
         <div className="overflow-x-auto">
-          <table className="w-full min-w-[880px] border-collapse text-left text-[12px]">
+          <table className="w-full min-w-220 border-collapse text-left text-[12px]">
             <thead>
               <tr className="border-b border-zinc-100 bg-zinc-50/60 text-[11px] text-zinc-500">
                 <th className="px-4 py-2.5 font-medium">能力项</th>

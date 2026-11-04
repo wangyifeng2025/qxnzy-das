@@ -256,14 +256,14 @@ export default function UsersPage() {
   }
 
   if (phase === "boot") {
-    return <div className="grid min-h-[320px] place-items-center text-sm text-zinc-400">正在加载用户</div>;
+    return <div className="grid min-h-80 place-items-center text-sm text-zinc-400">正在加载用户</div>;
   }
   if (phase === "auth") return <ApiConnect title="用户管理" />;
 
   const draft = editing && editing !== "new" ? editing : null;
 
   return (
-    <div className="mx-auto max-w-[1180px] space-y-4 p-5">
+    <div className="mx-auto max-w-295 space-y-4 p-5">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
           <h1 className="text-[19px] font-semibold tracking-tight text-zinc-900">用户管理</h1>
@@ -301,7 +301,7 @@ export default function UsersPage() {
 
       <div className="rounded-lg border border-zinc-200 bg-white">
         <div className="flex flex-wrap items-center gap-2 border-b border-zinc-100 px-4 py-3">
-          <div className="flex min-w-[190px] flex-1 items-center gap-2 rounded-md border border-zinc-200 px-2.5 py-1.5 focus-within:border-zinc-400">
+          <div className="flex min-w-47.5 flex-1 items-center gap-2 rounded-md border border-zinc-200 px-2.5 py-1.5 focus-within:border-zinc-400">
             <Search className="size-3.5 text-zinc-400" />
             <input className="w-full border-0 bg-transparent p-0 text-[12px] outline-none placeholder:text-zinc-400" placeholder="搜索工号 / 姓名 / 手机号" value={keyword} onChange={(event) => { setKeyword(event.target.value); setPage(1); }} />
           </div>
@@ -321,7 +321,7 @@ export default function UsersPage() {
           <button type="button" className="rounded-md border border-zinc-200 px-2.5 py-1.5 text-[12px] text-zinc-500 transition hover:bg-zinc-50" onClick={() => { setKeyword(""); setDept(""); setRole(""); setStatus(""); setPage(1); }}>重置</button>
         </div>
         <div className="overflow-x-auto">
-          <table className="w-full min-w-[980px] border-collapse text-left">
+          <table className="w-full min-w-245 border-collapse text-left">
             <thead>
               <tr className="border-b border-zinc-100 bg-zinc-50/60 text-[11px] text-zinc-500">
                 {["工号 / 账号", "姓名", "所属部门", "角色", "岗位", "手机号", "状态", "最近登录时间"].map((head) => <th key={head} className="px-4 py-2.5 font-medium">{head}</th>)}

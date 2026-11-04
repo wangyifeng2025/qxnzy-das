@@ -276,13 +276,13 @@ function FillPageContent() {
 
   if (!table || (role && !allowed)) {
     return (
-      <div className="mx-auto max-w-[620px] p-5 xl:p-6">
+      <div className="mx-auto max-w-155 p-5 xl:p-6">
         <div className="mt-8 rounded-xl border border-zinc-200 bg-white p-8 text-center shadow-sm">
           <div className="mx-auto flex size-12 items-center justify-center rounded-full bg-amber-50 text-amber-600">
             <ShieldAlert className="size-6" aria-hidden="true" />
           </div>
           <h2 className="mt-4 text-base font-semibold text-zinc-900">{table ? "该数据表不在你的填报范围内" : "未找到该数据表"}</h2>
-          <p className="mx-auto mt-2 max-w-[440px] text-[12px] leading-relaxed text-zinc-500">
+          <p className="mx-auto mt-2 max-w-110 text-[12px] leading-relaxed text-zinc-500">
             {table ? `${table.name}由部门管理员或信息中心维护，当前身份不能填报。` : "左侧菜单中的数据表才可以打开。"}
           </p>
           <div className="mt-5 flex flex-wrap items-center justify-center gap-2">
@@ -302,7 +302,7 @@ function FillPageContent() {
   const readonly = editing !== null && editing !== "new" && editing.status === "approved";
 
   return (
-    <div className="mx-auto max-w-[1600px] p-5 xl:p-6">
+    <div className="mx-auto max-w-400 p-5 xl:p-6">
       <section className="overflow-hidden rounded-lg border border-zinc-200 bg-white shadow-sm">
         <div className="flex flex-wrap items-start justify-between gap-3 border-b border-zinc-100 px-5 py-4">
           <div className="flex min-w-0 items-start gap-3">
@@ -349,7 +349,7 @@ function FillPageContent() {
           ].map(([label, value, StatIcon, tone]) => {
             const IconStat = StatIcon as LucideIcon;
             return (
-              <div key={String(label)} className="flex min-w-[88px] flex-1 items-center gap-2 rounded-md border border-zinc-200 bg-white px-3 py-2">
+              <div key={String(label)} className="flex min-w-22 flex-1 items-center gap-2 rounded-md border border-zinc-200 bg-white px-3 py-2">
                 <IconStat className="size-4 text-zinc-400" aria-hidden="true" />
                 <div>
                   <p className="text-[9px] text-zinc-400">{label as string}</p>
@@ -411,7 +411,7 @@ function FillPageContent() {
                 <Icon className="size-5" aria-hidden="true" />
               </span>
               <p className="mt-3 text-[12px] font-medium text-zinc-700">暂无「{table.name.replace(/数据(表)?$/, "")}」记录</p>
-              <p className="mt-1 max-w-[320px] text-[10px] leading-relaxed text-zinc-400">{emptyHint(table.id, table.dept)}</p>
+              <p className="mt-1 max-w-80 text-[10px] leading-relaxed text-zinc-400">{emptyHint(table.id, table.dept)}</p>
               {canCreate ? (
                 <button type="button" className="mt-4 flex h-8 items-center gap-1.5 rounded-md bg-zinc-900 px-3.5 text-[11px] font-medium text-white" onClick={() => openForm()}>
                   <Plus className="size-3" aria-hidden="true" />
@@ -436,8 +436,8 @@ function FillPageContent() {
             </div>
           ) : (
             <div className="overflow-hidden rounded-lg border border-zinc-200">
-              <div className="max-h-[560px] overflow-auto [scrollbar-width:none]">
-                <table className="w-full min-w-[860px] text-[11px]">
+              <div className="max-h-140 overflow-auto [scrollbar-width:none]">
+                <table className="w-full min-w-215 text-[11px]">
                   <thead className="sticky top-0 z-10 bg-zinc-50 text-[10px] text-zinc-500">
                     <tr>
                       <th className="w-10 px-3 py-2.5 text-left font-medium">#</th>
@@ -458,7 +458,7 @@ function FillPageContent() {
                           </span>
                         </td>
                         {columns.map((column, columnIndex) => (
-                          <td key={column.key} className={`px-3 py-3 ${columnIndex === 0 ? "max-w-[260px] font-medium text-zinc-800" : "whitespace-nowrap text-zinc-600"}`}>
+                          <td key={column.key} className={`px-3 py-3 ${columnIndex === 0 ? "max-w-65 font-medium text-zinc-800" : "whitespace-nowrap text-zinc-600"}`}>
                             {row.values[column.key] || "—"}
                           </td>
                         ))}
@@ -501,7 +501,7 @@ function FillPageContent() {
       {editing ? (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <button type="button" aria-label="关闭" className="absolute inset-0 bg-zinc-950/40" onClick={() => setEditing(null)} />
-          <div className="relative flex max-h-[88vh] w-full max-w-[820px] flex-col overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-2xl">
+          <div className="relative flex max-h-[88vh] w-full max-w-205 flex-col overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-2xl">
             <div className="flex items-start justify-between border-b border-zinc-100 px-5 py-4">
               <div>
                 <h3 className="text-sm font-semibold text-zinc-900">{editing === "new" ? `新增${table.name}` : readonly ? `查看${table.name}` : `编辑${table.name}`}</h3>
