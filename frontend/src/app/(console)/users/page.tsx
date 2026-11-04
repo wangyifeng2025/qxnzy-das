@@ -4,6 +4,7 @@ import { Activity, ChevronLeft, ChevronRight, Search, Upload, UserCheck, UserPlu
 import { useEffect, useMemo, useState, type ReactNode } from "react";
 
 import { ApiConnect } from "@/components/api-connect";
+import { FormCombobox } from "@/components/form-combobox";
 import { useToast } from "@/components/toast";
 import { ApiError, api } from "@/lib/api";
 import { readToken } from "@/lib/session";
@@ -392,17 +393,27 @@ export default function UsersPage() {
             <label className="block"><span className="mb-1 block text-[11px] text-zinc-500">工号 / 账号 <span className="text-rose-500">*</span></span><input name="account" className={fieldClass} placeholder="如 T20260118" defaultValue={draft?.account ?? ""} readOnly={Boolean(draft)} /></label>
             <label className="block"><span className="mb-1 block text-[11px] text-zinc-500">姓名 <span className="text-rose-500">*</span></span><input name="name" className={fieldClass} placeholder="请输入真实姓名" defaultValue={draft?.name ?? ""} /></label>
             <label className="block"><span className="mb-1 block text-[11px] text-zinc-500">所属部门</span>
-              <select name="department_id" className={fieldClass} defaultValue={draft?.department_id ?? ""}>
-                <option value="">未分配</option>
-                {departments.map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}
-              </select>
+              <FormCombobox
+                name="department_id"
+                placeholder="未分配"
+                defaultValue={draft?.department_id == null ? "" : String(draft.department_id)}
+                options={[
+                  { value: "", label: "未分配" },
+                  ...departments.map((item) => ({ value: String(item.id), label: item.name })),
+                ]}
+              />
             </label>
             {editing === "new" ? (
               <label className="block"><span className="mb-1 block text-[11px] text-zinc-500">角色</span>
-                <select name="role" className={fieldClass} defaultValue={roles.find((item) => item.code === "teacher")?.code ?? ""}>
-                  <option value="">未分配</option>
-                  {roles.map((item) => <option key={item.code} value={item.code}>{item.name}</option>)}
-                </select>
+                <FormCombobox
+                  name="role"
+                  placeholder="未分配"
+                  defaultValue={roles.find((item) => item.code === "teacher")?.code ?? ""}
+                  options={[
+                    { value: "", label: "未分配" },
+                    ...roles.map((item) => ({ value: item.code, label: item.name })),
+                  ]}
+                />
               </label>
             ) : (
               <label className="block"><span className="mb-1 block text-[11px] text-zinc-500">角色</span>

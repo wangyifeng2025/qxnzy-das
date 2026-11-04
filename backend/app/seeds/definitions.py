@@ -59,9 +59,18 @@ ROLES: list[tuple[str, str, str, str, list[str], int]] = [
     (
         "auditor",
         "业务部门审核员",
-        "教务处、人事处、科研处、学生处、招生就业处按职责审核全校数据",
+        "组织人事部、科研处、教务处按数据域审核并填写全校数据",
         DataScope.ALL,
-        ["home:view", "fill:view", "review:manage", "quality:view", "department:read", "dict:read"],
+        [
+            "home:view",
+            "fill:submit",
+            "fill:view",
+            "ai-parse:use",
+            "review:manage",
+            "quality:view",
+            "department:read",
+            "dict:read",
+        ],
         3,
     ),
     (
@@ -112,8 +121,11 @@ ADMIN_DEPARTMENT_CODE = "BM27"
 TEST_USERS: list[tuple[str, str, str, str | None, str | None, bool]] = [
     ("admin", "系统管理员", "admin", ADMIN_DEPARTMENT_CODE, "超级管理员", True),
     ("2004020159", "王一锋", "admin", ADMIN_DEPARTMENT_CODE, "信息中心负责人", True),
-    ("2015200012", "罗胜", "staff", None, None, False),
-    ("2024020008", "谭元霸", "teacher", None, None, False),
+    ("2015200012", "罗胜", "staff", "BM04", None, False),
+    ("2024020008", "谭元霸", "teacher", "BM04", None, False),
+    ("zzrsb01", "组织人事部审核员", "auditor", "BM11", "业务部门审核员", False),
+    ("kyc01", "科研处审核员", "auditor", "BM22", "业务部门审核员", False),
+    ("jwc01", "教务处审核员", "auditor", "BM07", "业务部门审核员", False),
 ]
 
 # (账号, 姓名, 角色编码, 部门编码, 岗位)

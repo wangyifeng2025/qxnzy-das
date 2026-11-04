@@ -11,6 +11,7 @@ from app.api.routes.departments import router as departments_router
 from app.api.routes.dicts import router as dicts_router
 from app.api.routes.health import router as health_router
 from app.api.routes.roles import router as roles_router
+from app.api.routes.staff import router as staff_router
 from app.api.routes.users import router as users_router
 from app.core.config import settings
 from app.core.exceptions import register_exception_handlers
@@ -59,4 +60,5 @@ app.include_router(users_router)
 app.include_router(roles_router)
 app.include_router(departments_router)
 app.include_router(dicts_router)
+app.include_router(staff_router)
 app.include_router(audit_router)

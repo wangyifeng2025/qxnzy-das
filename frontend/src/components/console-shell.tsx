@@ -2,11 +2,11 @@
 
 import { Bell, ChevronRight, ChevronsUpDown, Database, LogOut, School, Search } from "lucide-react";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { Suspense, useEffect, useState } from "react";
 
 import { ToastProvider, useToast } from "@/components/toast";
-import { navigationFor, ROUTE_ACCESS, ROUTE_TITLE } from "@/lib/navigation";
+import { fillScopeLabel, navigationFor, navLinks, ROUTE_ACCESS, ROUTE_TITLE, type NavItem } from "@/lib/navigation";
 import { clearSession, readSession, ROLE_HOME, type Role, type SessionUser } from "@/lib/session";
 
 const avatarTone: Record<Role, string> = {
@@ -15,14 +15,25 @@ const avatarTone: Record<Role, string> = {
   admin: "bg-zinc-900",
 };
 
+function linkActive(href: string, pathname: string, table: string | null) {
+  const [path, query = ""] = href.split("?");
+  if (path !== pathname) return false;
+  if (!query) return pathname !== "/fill";
+  const expected = new URLSearchParams(query).get("table");
+  return expected === (table || "staff");
+}
+
 function ShellFrame({ user, children }: { user: SessionUser; children: React.ReactNode }) {
   const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const table = searchParams.get("table");
   const router = useRouter();
   const toast = useToast();
   const groups = navigationFor(user.role);
-  const navItems = groups.flatMap((group) => group.items);
-  const matched = navItems.filter((item) => item.href === pathname);
-  const currentNav = matched.find((item) => !item.label.endsWith("工作台")) ?? matched[0];
+  const [collectOpen, setCollectOpen] = useState(true);
+  const links = navLinks(groups);
+  const matched = links.filter((item) => linkActive(item.href, pathname, table));
+  const current = matched.find((item) => !item.label.endsWith("工作台")) ?? matched[0];
   const meta = ROUTE_TITLE[pathname] ?? { crumb: "数据采集", heading: "2025—2026 学年第一学期" };
   const heading =
     pathname === "/my-fill"
@@ -79,33 +90,23 @@ function ShellFrame({ user, children }: { user: SessionUser; children: React.Rea
             <ChevronsUpDown className="size-3.5 text-zinc-400" aria-hidden="true" />
           </button>
         </div>
-        <nav aria-label="主导航" className="flex-1 space-y-5 overflow-y-auto px-3 py-4">
+        <nav aria-label="主导航" className="flex-1 space-y-5 overflow-y-auto px-3 py-4 [scrollbar-width:none]">
           {groups.map((group) => (
             <div key={group.title}>
               <p className="px-2.5 pb-2 text-[10px] font-semibold tracking-[0.12em] text-zinc-400">{group.title}</p>
               <div className="space-y-1">
-                {group.items.map((item) => {
-                  const active = currentNav?.href === item.href && currentNav.label === item.label;
-                  const Icon = item.icon;
-                  return (
-                    <Link
-                      key={`${group.title}-${item.label}`}
-                      href={item.href}
-                      aria-current={active ? "page" : undefined}
-                      className={`flex items-center gap-2.5 rounded-md px-2.5 py-2 text-[13px] transition ${
-                        active ? "bg-zinc-100 font-medium text-zinc-900" : "text-zinc-600 hover:bg-zinc-50 hover:text-zinc-900"
-                      }`}
-                    >
-                      <Icon className={`size-4 ${active ? "text-zinc-700" : "text-zinc-400"}`} aria-hidden="true" />
-                      <span className="flex-1">{item.label}</span>
-                      {item.badge ? (
-                        <span className={`rounded px-1.5 py-0.5 text-[9px] font-medium ${item.badgeClass ?? "bg-zinc-100 text-zinc-500"}`}>
-                          {item.badge}
-                        </span>
-                      ) : null}
-                    </Link>
-                  );
-                })}
+                {group.items.map((item) => (
+                  <NavEntry
+                    key={`${group.title}-${item.label}`}
+                    item={item}
+                    pathname={pathname}
+                    table={table}
+                    currentHref={current?.href}
+                    currentLabel={current?.label}
+                    collectOpen={collectOpen}
+                    onToggleCollect={() => setCollectOpen((open) => !open)}
+                  />
+                ))}
               </div>
             </div>
           ))}
@@ -126,6 +127,11 @@ function ShellFrame({ user, children }: { user: SessionUser; children: React.Rea
               <span>数据采集</span>
               <ChevronRight className="size-3" aria-hidden="true" />
               <span className="text-zinc-700">{meta.crumb}</span>
+              {pathname === "/fill" ? (
+                <span className="rounded-full border border-zinc-200 bg-white px-2 py-0.5 text-[10px] text-zinc-500">
+                  {fillScopeLabel(user.role)}
+                </span>
+              ) : null}
             </div>
             <p className="mt-0.5 truncate text-[13px] font-semibold text-zinc-900">{heading}</p>
           </div>
@@ -176,12 +182,12 @@ function ShellFrame({ user, children }: { user: SessionUser; children: React.Rea
         </header>
 
         <nav aria-label="移动导航" className="flex gap-1 overflow-x-auto border-b border-zinc-200 bg-white px-3 py-2 lg:hidden">
-          {groups.flatMap((group) => group.items).map((item) => (
+          {links.map((item) => (
             <Link
               key={item.href + item.label}
               href={item.href}
               className={`shrink-0 rounded-md px-2.5 py-1.5 text-[12px] ${
-                pathname === item.href ? "bg-zinc-900 text-white" : "bg-zinc-100 text-zinc-600"
+                current?.href === item.href && current.label === item.label ? "bg-zinc-900 text-white" : "bg-zinc-100 text-zinc-600"
               }`}
             >
               {item.label}
@@ -207,6 +213,88 @@ function ShellFrame({ user, children }: { user: SessionUser; children: React.Rea
   );
 }
 
+function NavEntry({
+  item,
+  pathname,
+  table,
+  currentHref,
+  currentLabel,
+  collectOpen,
+  onToggleCollect,
+}: {
+  item: NavItem;
+  pathname: string;
+  table: string | null;
+  currentHref?: string;
+  currentLabel?: string;
+  collectOpen: boolean;
+  onToggleCollect: () => void;
+}) {
+  const Icon = item.icon;
+  if (item.children) {
+    return (
+      <div>
+        <button
+          type="button"
+          aria-expanded={collectOpen}
+          className={`flex w-full items-center gap-2 rounded-md px-2.5 py-2 text-left text-[13px] ${
+            collectOpen ? "bg-zinc-100 font-medium text-zinc-900" : "text-zinc-600 hover:bg-zinc-50 hover:text-zinc-900"
+          }`}
+          onClick={onToggleCollect}
+        >
+          <Icon className={`size-4 shrink-0 ${collectOpen ? "text-zinc-700" : "text-zinc-400"}`} aria-hidden="true" />
+          <span className="min-w-0 flex-1 truncate">{item.label}</span>
+          {item.badge ? (
+            <span className={`max-w-16 truncate rounded px-1.5 py-0.5 text-[9px] font-medium ${item.badgeClass ?? "bg-zinc-100 text-zinc-500"}`}>
+              {item.badge}
+            </span>
+          ) : null}
+          <ChevronRight className={`size-3.5 shrink-0 text-zinc-400 transition ${collectOpen ? "rotate-90" : ""}`} aria-hidden="true" />
+        </button>
+        {collectOpen ? (
+          <div className="mt-1 space-y-0.5 border-l border-zinc-200 pb-1 pl-2">
+            {item.children.map((child) => {
+              const active = linkActive(child.href, pathname, table);
+              return (
+                <Link
+                  key={child.href}
+                  href={child.href}
+                  title={child.label}
+                  aria-current={active ? "page" : undefined}
+                  className={`flex min-w-0 items-center rounded-md px-2 py-1.5 text-[11px] leading-snug ${
+                    active ? "bg-[#f2f2f3] font-medium text-zinc-900" : "text-zinc-600 hover:bg-zinc-50 hover:text-zinc-900"
+                  }`}
+                >
+                  <span className="truncate">{child.label}</span>
+                </Link>
+              );
+            })}
+          </div>
+        ) : null}
+      </div>
+    );
+  }
+
+  const active = item.href === currentHref && item.label === currentLabel;
+  return (
+    <Link
+      href={item.href ?? "/home"}
+      aria-current={active ? "page" : undefined}
+      className={`flex items-center gap-2.5 rounded-md px-2.5 py-2 text-[13px] transition ${
+        active ? "bg-zinc-100 font-medium text-zinc-900" : "text-zinc-600 hover:bg-zinc-50 hover:text-zinc-900"
+      }`}
+    >
+      <Icon className={`size-4 shrink-0 ${active ? "text-zinc-700" : "text-zinc-400"}`} aria-hidden="true" />
+      <span className="min-w-0 flex-1 truncate">{item.label}</span>
+      {item.badge ? (
+        <span className={`rounded px-1.5 py-0.5 text-[9px] font-medium ${item.badgeClass ?? "bg-zinc-100 text-zinc-500"}`}>
+          {item.badge}
+        </span>
+      ) : null}
+    </Link>
+  );
+}
+
 export function ConsoleShell({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
@@ -223,20 +311,24 @@ export function ConsoleShell({ children }: { children: React.ReactNode }) {
       router.replace(ROLE_HOME[session.role]);
       return;
     }
-    setUser(session);
-    setReady(true);
+    queueMicrotask(() => {
+      setUser(session);
+      setReady(true);
+    });
   }, [pathname, router]);
 
   return (
     <ToastProvider>
-      {ready && user ? (
-        <ShellFrame user={user}>{children}</ShellFrame>
-      ) : (
-        <div className="grid h-screen place-items-center bg-[#f7f7f8] text-sm text-zinc-400">
-          正在进入工作台
-          <div className="hidden">{children}</div>
-        </div>
-      )}
+      <Suspense fallback={<div className="grid h-screen place-items-center bg-[#f7f7f8] text-sm text-zinc-400">正在进入工作台</div>}>
+        {ready && user ? (
+          <ShellFrame user={user}>{children}</ShellFrame>
+        ) : (
+          <div className="grid h-screen place-items-center bg-[#f7f7f8] text-sm text-zinc-400">
+            正在进入工作台
+            <div className="hidden">{children}</div>
+          </div>
+        )}
+      </Suspense>
     </ToastProvider>
   );
 }

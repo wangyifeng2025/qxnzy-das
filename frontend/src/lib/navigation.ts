@@ -1,10 +1,10 @@
 import type { LucideIcon } from "lucide-react";
 import {
+  BookMarked,
   BookOpen,
   Braces,
-  Building2,
   ClipboardCheck,
-  FilePenLine,
+  GraduationCap,
   LayoutDashboard,
   ListChecks,
   ShieldCheck,
@@ -16,12 +16,18 @@ import {
 
 import type { Role } from "@/lib/session";
 
-export type NavItem = {
+export type NavChild = {
   href: string;
+  label: string;
+};
+
+export type NavItem = {
+  href?: string;
   label: string;
   icon: LucideIcon;
   badge?: string;
   badgeClass?: string;
+  children?: NavChild[];
 };
 
 export type NavGroup = {
@@ -29,11 +35,32 @@ export type NavGroup = {
   items: NavItem[];
 };
 
-const fillScope: Record<Role, string> = {
-  teacher: "本人填报",
-  staff: "本部门范围",
-  admin: "全校范围",
-};
+export const TEACHER_FILL_TABLES: NavChild[] = [
+  { href: "/fill?table=staff", label: "教职工基本信息" },
+  { href: "/fill?table=training", label: "教师培训与交流" },
+  { href: "/fill?table=award", label: "教师获奖信息" },
+  { href: "/fill?table=paper", label: "教师论文著作" },
+  { href: "/fill?table=vertical", label: "教师纵向科研项目" },
+  { href: "/fill?table=horizontal", label: "教师横向课题" },
+  { href: "/fill?table=practice", label: "教师企业实践锻炼" },
+  { href: "/fill?table=ip", label: "教师知识产权" },
+  { href: "/fill?table=teaching", label: "授课信息" },
+];
+
+const TEACHER_TABLE_IDS = new Set(
+  TEACHER_FILL_TABLES.map((item) => new URLSearchParams(item.href.split("?")[1]).get("table")),
+);
+
+export function fillScopeLabel(role: Role) {
+  if (role === "admin") return "全校范围";
+  if (role === "staff") return "本部门范围";
+  return "本人填报";
+}
+
+export function canFillTable(role: Role, tableId: string) {
+  if (role === "teacher") return TEACHER_TABLE_IDS.has(tableId);
+  return true;
+}
 
 export function navigationFor(role: Role): NavGroup[] {
   const workbench =
@@ -43,52 +70,51 @@ export function navigationFor(role: Role): NavGroup[] {
         ? { href: "/review", label: "部门管理员工作台", icon: LayoutDashboard }
         : { href: "/my-fill", label: "我的工作台", icon: LayoutDashboard };
 
-  const collection: NavGroup = {
-    title: "数据采集",
-    items: [
-      { href: "/fill", label: "数据填报表单", icon: FilePenLine, badge: fillScope[role] },
-      {
-        href: "/ai-parse",
-        label: "文件解析入库",
-        icon: Sparkles,
-        badge: "AI",
-        badgeClass: "bg-blue-50 text-blue-600",
-      },
-      {
-        href: "/my-fill",
-        label: role === "staff" ? "本部门填报跟踪" : "我的填报",
-        icon: ClipboardCheck,
-        badge: role === "admin" ? undefined : "2",
-        badgeClass: "bg-rose-50 text-rose-600",
-      },
-    ],
-  };
+  const collectionItems: NavItem[] = [
+    {
+      label: "教师信息采集",
+      icon: Users,
+      badge: fillScopeLabel(role),
+      badgeClass: "bg-white text-zinc-500",
+      children: TEACHER_FILL_TABLES,
+    },
+  ];
+
+  if (role !== "teacher") {
+    collectionItems.push(
+      { href: "/fill?table=major", label: "专业设置数据", icon: BookOpen },
+      { href: "/fill?table=course", label: "课程数据", icon: BookMarked },
+      { href: "/fill?table=student", label: "高职在校生数据", icon: GraduationCap },
+    );
+  }
+
+  collectionItems.push(
+    {
+      href: "/ai-parse",
+      label: "文件解析入库",
+      icon: Sparkles,
+      badge: "AI",
+      badgeClass: "bg-blue-50 text-blue-600",
+    },
+    {
+      href: "/my-fill",
+      label: role === "staff" ? "本部门填报跟踪" : "我的填报",
+      icon: ClipboardCheck,
+    },
+  );
 
   if (role === "staff" || role === "admin") {
-    collection.items.push({
+    collectionItems.push({
       href: "/review",
       label: role === "admin" ? "审核与复核导入" : "审核与批量导入",
       icon: ListChecks,
-      badge: "18",
-      badgeClass: "bg-amber-50 text-amber-700",
     });
   }
 
-  const groups: NavGroup[] = [{ title: "工作台", items: [workbench] }];
-
-  if (role === "admin") {
-    groups.push({
-      title: "系统管理",
-      items: [
-        { href: "/departments", label: "系部管理", icon: Building2 },
-        { href: "/users", label: "用户管理", icon: Users },
-        { href: "/roles", label: "角色管理", icon: ShieldCheck },
-        { href: "/dicts", label: "字典管理", icon: BookOpen },
-      ],
-    });
-  }
-
-  groups.push(collection);
+  const groups: NavGroup[] = [
+    { title: "工作台", items: [workbench] },
+    { title: "数据采集", items: collectionItems },
+  ];
 
   if (role === "admin") {
     groups.push({
@@ -100,9 +126,30 @@ export function navigationFor(role: Role): NavGroup[] {
         { href: "/quality", label: "采集日志与质量", icon: ShieldCheck },
       ],
     });
+    groups.push({
+      title: "系统管理",
+      items: [
+        { href: "/users", label: "用户管理", icon: Users },
+        { href: "/roles", label: "角色管理", icon: ShieldCheck },
+        { href: "/dicts", label: "字典管理", icon: BookOpen },
+      ],
+    });
   }
 
   return groups;
+}
+
+export function navLinks(groups: NavGroup[]): Array<NavItem & { href: string }> {
+  return groups.flatMap((group) =>
+    group.items.flatMap((item) => {
+      const links: Array<NavItem & { href: string }> = [];
+      if (item.href) links.push({ ...item, href: item.href });
+      for (const child of item.children ?? []) {
+        links.push({ href: child.href, label: child.label, icon: item.icon });
+      }
+      return links;
+    }),
+  );
 }
 
 export const ROUTE_ACCESS: Record<string, Role[]> = {
@@ -123,7 +170,7 @@ export const ROUTE_ACCESS: Record<string, Role[]> = {
 
 export const ROUTE_TITLE: Record<string, { crumb: string; heading: string }> = {
   "/home": { crumb: "采集总览", heading: "数据采集工作台" },
-  "/fill": { crumb: "数据填报表单", heading: "手动采集" },
+  "/fill": { crumb: "数据填报表单", heading: "2025—2026 学年第一学期" },
   "/ai-parse": { crumb: "文件解析入库", heading: "大模型驱动" },
   "/my-fill": { crumb: "我的填报", heading: "教师个人工作台" },
   "/review": { crumb: "审核与批量导入", heading: "部门审核工作台" },

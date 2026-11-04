@@ -59,3 +59,19 @@ def require_permissions(
         return user
 
     return dependency
+
+
+def require_any_permission(
+    *codes: str,
+) -> Callable[..., Coroutine[Any, Any, User]]:
+    """要求当前用户至少拥有其中一项权限；超级管理员直接放行。"""
+
+    async def dependency(user: CurrentUser) -> User:
+        if user.is_superuser or user.permission_codes.intersection(codes):
+            return user
+        raise HTTPException(
+            status.HTTP_403_FORBIDDEN,
+            detail=f"缺少权限：{'、'.join(codes)}",
+        )
+
+    return dependency

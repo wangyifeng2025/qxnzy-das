@@ -22,6 +22,7 @@ build/
 
 # 页面原型
 docs/datacollect/
+docs/SJBZ/
 
 # 上传文件
 storage/

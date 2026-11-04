@@ -4,6 +4,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 
 import { ApiConnect } from "@/components/api-connect";
+import { FormCombobox } from "@/components/form-combobox";
 import { fieldClass, ghostButton, KpiCard, primaryButton, StatusPill } from "@/components/page-bits";
 import { useToast } from "@/components/toast";
 import { ApiError, api } from "@/lib/api";
@@ -366,11 +367,16 @@ export default function DepartmentsPage() {
               </label>
               <label className="grid gap-1 text-[11px] text-zinc-500">
                 类型 *
-                <select name="kind" className={fieldClass} defaultValue={draft?.kind ?? "teaching"}>
-                  <option value="teaching">教学系部</option>
-                  <option value="functional">职能部门</option>
-                  <option value="other">其他</option>
-                </select>
+                <FormCombobox
+                  name="kind"
+                  placeholder="请选择类型"
+                  defaultValue={draft?.kind ?? "teaching"}
+                  options={[
+                    { value: "teaching", label: "教学系部" },
+                    { value: "functional", label: "职能部门" },
+                    { value: "other", label: "其他" },
+                  ]}
+                />
               </label>
               <label className="grid gap-1 text-[11px] text-zinc-500 sm:col-span-2">
                 规范名称（全称） *

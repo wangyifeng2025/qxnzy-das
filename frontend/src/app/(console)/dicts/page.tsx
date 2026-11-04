@@ -3,6 +3,7 @@
 import { BookOpen, Info, Plus, Search, Trash2, X } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 
+import { FormCombobox } from "@/components/form-combobox";
 import { useToast } from "@/components/toast";
 import { ApiError, api, loginRequest } from "@/lib/api";
 import { readToken, sessionFromAuth, writeSession, writeToken } from "@/lib/session";
@@ -431,7 +432,17 @@ export default function DictsPage() {
                 <label className="block"><span className="mb-1 block text-[11px] text-zinc-500">排序</span><input name="sort" type="number" className={fieldClass} defaultValue={editing === "new" ? items.length + 1 : editing.sort_order} /></label>
               </div>
               <label className="block"><span className="mb-1 block text-[11px] text-zinc-500">字典名称 <span className="text-rose-500">*</span></span><input name="label" className={fieldClass} placeholder="下拉中显示的文本" defaultValue={editing === "new" ? "" : editing.label} /></label>
-              <label className="block"><span className="mb-1 block text-[11px] text-zinc-500">状态</span><select name="status" className={fieldClass} defaultValue={editing !== "new" && !editing.is_active ? "disabled" : "active"}><option value="active">启用</option><option value="disabled">停用</option></select></label>
+              <label className="block"><span className="mb-1 block text-[11px] text-zinc-500">状态</span>
+                <FormCombobox
+                  name="status"
+                  placeholder="请选择状态"
+                  defaultValue={editing !== "new" && !editing.is_active ? "disabled" : "active"}
+                  options={[
+                    { value: "active", label: "启用" },
+                    { value: "disabled", label: "停用" },
+                  ]}
+                />
+              </label>
               <label className="block"><span className="mb-1 block text-[11px] text-zinc-500">备注</span><input name="remark" className={fieldClass} placeholder="说明该字典项适用范围" defaultValue={editing === "new" ? "" : (editing.remark ?? "")} /></label>
               {formError ? <p className="text-[11px] text-rose-600">{formError}</p> : null}
             </div>

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 
+import { FormCombobox } from "@/components/form-combobox";
 import { fieldClass, PageIntro, Panel, primaryButton, StatusPill } from "@/components/page-bits";
 import { useToast } from "@/components/toast";
 import { DATA_TABLES, SCHEMA_FIELDS } from "@/lib/tables";
@@ -107,8 +108,16 @@ export default function SchemaPage() {
             <div className="mt-4 grid gap-3">
               <input name="cn" className={fieldClass} placeholder="字段名称" />
               <input name="code" className={`${fieldClass} font-mono`} placeholder="field_code" />
-              <select name="type" className={fieldClass}><option>VARCHAR(64)</option><option>TEXT</option><option>INT</option><option>DATE</option></select>
-              <select name="source" className={fieldClass}><option>手动填报</option><option>业务系统 API</option><option>AI 文件解析</option></select>
+              <FormCombobox
+                name="type"
+                defaultValue="VARCHAR(64)"
+                options={["VARCHAR(64)", "TEXT", "INT", "DATE"].map((item) => ({ value: item, label: item }))}
+              />
+              <FormCombobox
+                name="source"
+                defaultValue="手动填报"
+                options={["手动填报", "业务系统 API", "AI 文件解析"].map((item) => ({ value: item, label: item }))}
+              />
               <label className="flex items-center gap-2 text-[12px]"><input name="required" type="checkbox" />设为必填字段</label>
             </div>
             <div className="mt-4 flex justify-end gap-2">

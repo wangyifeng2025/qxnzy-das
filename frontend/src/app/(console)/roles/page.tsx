@@ -4,6 +4,7 @@ import { Plus, Search, ShieldAlert, X } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 
 import { ApiConnect } from "@/components/api-connect";
+import { FormCombobox } from "@/components/form-combobox";
 import { useToast } from "@/components/toast";
 import { ApiError, api } from "@/lib/api";
 import { readToken } from "@/lib/session";
@@ -309,9 +310,12 @@ export default function RolesPage() {
               <label className="block"><span className="mb-1 block text-[11px] text-zinc-500">角色名称 <span className="text-rose-500">*</span></span><input name="name" className={fieldClass} placeholder="如 院系填报审核员" defaultValue={draft?.name ?? ""} /></label>
               <label className="block"><span className="mb-1 block text-[11px] text-zinc-500">角色编码 <span className="text-rose-500">*</span></span><input name="code" className={`${fieldClass} font-mono`} placeholder="如 dept_reviewer" defaultValue={draft?.code ?? ""} readOnly={Boolean(draft)} /></label>
               <label className="block"><span className="mb-1 block text-[11px] text-zinc-500">数据范围</span>
-                <select name="scope" className={fieldClass} defaultValue={draft?.data_scope ?? "department"}>
-                  {scopeOptions.map((item) => <option key={item.value} value={item.value}>{item.label}</option>)}
-                </select>
+                <FormCombobox
+                  name="scope"
+                  placeholder="请选择数据范围"
+                  defaultValue={draft?.data_scope ?? "department"}
+                  options={scopeOptions.map((item) => ({ value: item.value, label: item.label }))}
+                />
               </label>
               <label className="block"><span className="mb-1 block text-[11px] text-zinc-500">说明</span><input name="description" className={fieldClass} defaultValue={draft?.description ?? ""} /></label>
               <p className="rounded-md bg-zinc-50 px-3 py-2 text-[11px] leading-relaxed text-zinc-500">编码创建后不可修改。保存后可继续在「配置权限」中勾选功能权限。</p>
