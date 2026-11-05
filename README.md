@@ -167,6 +167,24 @@ brew services restart redis@8.2
 
 系统表由迁移 `a3f1c2d4e5b6` 创建，与 ODS 表分开：`sys_department`、`sys_user`、`sys_role`、`sys_permission`、`sys_dict_type`、`sys_dict_item`，以及 `sys_user_role`、`sys_role_permission`。
 
+## 日志
+
+API 和 worker 各自写一个文件，默认在 `backend/storage/logs/`：
+
+| 文件          | 内容                                                    |
+| ------------- | ------------------------------------------------------- |
+| `api.log`     | 访问日志（方法、路径、状态码、耗时、请求 ID）与接口异常 |
+| `worker.log`  | 任务调度、解析进度、模型调用失败与解析失败              |
+
+每条日志都带 `[请求 ID]`，页面上报错时把 `request_id` 一起提供即可定位。worker 处理的任务没有请求上下文，该位置显示 `-`，用任务 ID 查找。
+
+```bash
+tail -f backend/storage/logs/worker.log
+rg "task=b4f82031" backend/storage/logs/worker.log
+```
+
+模型输出解析失败时会额外记录 `tokens_out`、内容长度和原文片段。若 `tokens_out` 正好等于 `AI_MAX_TOKENS`，说明输出被截断。日志含业务数据时，可用 `LOG_FAILED_MODEL_OUTPUT=false` 关闭原文片段。
+
 ## 配置
 
 后端示例见 `backend/.env.example`：
@@ -179,6 +197,10 @@ brew services restart redis@8.2
 | `DEEPSEEK_API_KEY`                                 | 模型密钥，留空即可启动                                                                                                      |
 | `UPLOAD_DIR`                                       | 上传目录，默认 `./storage/uploads`                                                                                          |
 | `MAX_UPLOAD_SIZE_MB`                               | 上传大小上限，默认 20                                                                                                       |
+| `LOG_LEVEL` / `LOG_TO_FILE`                        | 日志级别（默认 `INFO`）与是否写文件（默认 `true`）                                                                          |
+| `LOG_DIR`                                          | 日志目录，默认 `./storage/logs`                                                                                             |
+| `LOG_MAX_BYTES` / `LOG_BACKUP_COUNT`               | 单个日志文件大小上限（默认 10MB）与保留份数（默认 5）                                                                       |
+| `LOG_FAILED_MODEL_OUTPUT`                          | 模型输出解析失败时是否记录原文片段，默认 `true`                                                                             |
 | `JWT_SECRET_KEY`                                   | 签发访问令牌的密钥，生产环境必须替换为至少 32 字节随机值                                                                    |
 | `ACCESS_TOKEN_EXPIRE_MINUTES`                      | 令牌有效期，默认 720 分钟                                                                                                   |
 | `INITIAL_ADMIN_ACCOUNT` / `INITIAL_ADMIN_PASSWORD` | 初始化脚本创建的管理员账号与密码，首次登录后请修改                                                                          |

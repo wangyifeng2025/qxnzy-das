@@ -23,6 +23,7 @@ build/
 # 页面原型
 docs/datacollect/
 docs/SJBZ/
+docs/AI解析测试数据/
 
 # 上传文件
 storage/

@@ -1,9 +1,10 @@
 "use client";
 
-import { Activity, ChevronLeft, ChevronRight, Search, Upload, UserCheck, UserPlus, UserX, Users, X } from "lucide-react";
+import { Activity, Search, Upload, UserCheck, UserPlus, UserX, Users, X } from "lucide-react";
 import { useEffect, useMemo, useState, type ReactNode } from "react";
 
 import { ApiConnect } from "@/components/api-connect";
+import { createAppColumnHelper, DataTable, TablePagination, useAppTable } from "@/components/data-table";
 import { FormCombobox } from "@/components/form-combobox";
 import { useToast } from "@/components/toast";
 import { ApiError, api } from "@/lib/api";
@@ -30,6 +31,8 @@ type UserRow = {
 type UserPage = { items: UserRow[]; total: number; page: number; page_size: number };
 
 const pageSize = 6;
+
+const userHelper = createAppColumnHelper<UserRow>();
 const fieldClass = "w-full rounded-md border border-zinc-200 bg-white px-2.5 py-2 text-[12px] outline-none focus:border-zinc-400";
 
 const roleStyles: Record<string, string> = {
@@ -94,7 +97,6 @@ export default function UsersPage() {
   const [dept, setDept] = useState("");
   const [role, setRole] = useState("");
   const [status, setStatus] = useState<"" | "active" | "disabled">("");
-  const [page, setPage] = useState(1);
   const [editing, setEditing] = useState<UserRow | "new" | null>(null);
   const [assigning, setAssigning] = useState<UserRow | null>(null);
   const [roleCodes, setRoleCodes] = useState<string[]>([]);
@@ -150,9 +152,123 @@ export default function UsersPage() {
     });
   }, [users, keyword, dept, role, status]);
 
-  const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
-  const currentPage = Math.min(page, totalPages);
-  const rows = filtered.slice((currentPage - 1) * pageSize, currentPage * pageSize);
+  const columns = useMemo(
+    () =>
+      userHelper.columns([
+        userHelper.accessor("account", { header: "工号 / 账号", meta: { cellClassName: "font-mono text-[11px] text-zinc-500" } }),
+        userHelper.accessor("name", { header: "姓名", meta: { cellClassName: "font-medium text-zinc-900" } }),
+        userHelper.accessor("department_name", {
+          header: "所属部门",
+          cell: ({ getValue }) => getValue() || "—",
+          meta: { cellClassName: "text-zinc-600" },
+        }),
+        userHelper.display({
+          id: "roles",
+          header: "角色",
+          cell: ({ row }) => (
+            <div className="flex flex-wrap gap-1">
+              {row.original.role_names.length ? (
+                row.original.role_names.map((name, index) => (
+                  <span
+                    key={`${row.original.id}-${name}`}
+                    className={`rounded px-1.5 py-0.5 text-[10px] font-medium ${roleStyles[row.original.role_codes[index] ?? ""] ?? "bg-zinc-100 text-zinc-600"}`}
+                  >
+                    {name}
+                  </span>
+                ))
+              ) : (
+                <span className="text-zinc-400">未分配</span>
+              )}
+            </div>
+          ),
+        }),
+        userHelper.accessor("post", {
+          header: "岗位",
+          cell: ({ getValue }) => getValue() || "—",
+          meta: { cellClassName: "text-zinc-600" },
+        }),
+        userHelper.accessor("phone", {
+          header: "手机号",
+          cell: ({ getValue }) => getValue() || "—",
+          meta: { cellClassName: "font-mono text-[11px] text-zinc-500" },
+        }),
+        userHelper.accessor("status", {
+          header: "状态",
+          cell: ({ getValue }) =>
+            getValue() === "active" ? (
+              <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-medium text-emerald-700">
+                <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+                正常
+              </span>
+            ) : (
+              <span className="inline-flex items-center gap-1 rounded-full bg-zinc-100 px-2 py-0.5 text-[10px] font-medium text-zinc-500">
+                <span className="h-1.5 w-1.5 rounded-full bg-zinc-400" />
+                停用
+              </span>
+            ),
+        }),
+        userHelper.accessor("last_login_at", {
+          header: "最近登录时间",
+          cell: ({ getValue }) => formatTime(getValue()),
+          meta: { cellClassName: "text-[11px] text-zinc-500" },
+        }),
+        userHelper.display({
+          id: "actions",
+          header: "操作",
+          meta: { headClassName: "text-right", cellClassName: "text-right" },
+          cell: ({ row }) => (
+            <div className="flex items-center justify-end gap-1">
+              <button
+                type="button"
+                className="rounded px-1.5 py-1 text-[11px] text-zinc-600 transition hover:bg-zinc-100"
+                onClick={() => {
+                  setFormError("");
+                  setEditing(row.original);
+                }}
+              >
+                编辑
+              </button>
+              <button
+                type="button"
+                className={`rounded px-1.5 py-1 text-[11px] ${row.original.status === "active" ? "text-amber-600 hover:bg-amber-50" : "text-emerald-600 hover:bg-emerald-50"}`}
+                onClick={() => void toggleStatus(row.original)}
+              >
+                {row.original.status === "active" ? "停用" : "启用"}
+              </button>
+              <button
+                type="button"
+                className="rounded px-1.5 py-1 text-[11px] text-blue-600 transition hover:bg-blue-50"
+                onClick={() => {
+                  setAssigning(row.original);
+                  setRoleCodes(row.original.role_codes);
+                }}
+              >
+                分配角色
+              </button>
+              <button
+                type="button"
+                className="rounded px-1.5 py-1 text-[11px] text-zinc-500 transition hover:bg-zinc-100"
+                onClick={() => {
+                  setFormError("");
+                  setResetUser(row.original);
+                }}
+              >
+                重置密码
+              </button>
+            </div>
+          ),
+        }),
+      ]),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [],
+  );
+
+  const userTable = useAppTable({
+    data: filtered,
+    columns,
+    initialState: { pagination: { pageIndex: 0, pageSize } },
+  });
+
   const activeCount = users.filter((user) => user.status === "active").length;
   const signedInCount = users.filter((user) => user.last_login_at).length;
   const loadedNote = total > users.length ? `已加载 ${users.length} / ${total} 个账号` : `共 ${users.length} 个账号`;
@@ -199,7 +315,6 @@ export default function UsersPage() {
           }),
         });
         toast("用户已新增");
-        setPage(1);
       }
       await reloadUsers();
       setEditing(null);
@@ -303,79 +418,25 @@ export default function UsersPage() {
         <div className="flex flex-wrap items-center gap-2 border-b border-zinc-100 px-4 py-3">
           <div className="flex min-w-47.5 flex-1 items-center gap-2 rounded-md border border-zinc-200 px-2.5 py-1.5 focus-within:border-zinc-400">
             <Search className="size-3.5 text-zinc-400" />
-            <input className="w-full border-0 bg-transparent p-0 text-[12px] outline-none placeholder:text-zinc-400" placeholder="搜索工号 / 姓名 / 手机号" value={keyword} onChange={(event) => { setKeyword(event.target.value); setPage(1); }} />
+            <input className="w-full border-0 bg-transparent p-0 text-[12px] outline-none placeholder:text-zinc-400" placeholder="搜索工号 / 姓名 / 手机号" value={keyword} onChange={(event) => setKeyword(event.target.value)} />
           </div>
-          <select className="rounded-md border border-zinc-200 bg-white px-2.5 py-1.5 text-[12px] text-zinc-600 outline-none" value={dept} onChange={(event) => { setDept(event.target.value); setPage(1); }}>
+          <select className="rounded-md border border-zinc-200 bg-white px-2.5 py-1.5 text-[12px] text-zinc-600 outline-none" value={dept} onChange={(event) => setDept(event.target.value)}>
             <option value="">全部部门</option>
             {departments.map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}
           </select>
-          <select className="rounded-md border border-zinc-200 bg-white px-2.5 py-1.5 text-[12px] text-zinc-600 outline-none" value={role} onChange={(event) => { setRole(event.target.value); setPage(1); }}>
+          <select className="rounded-md border border-zinc-200 bg-white px-2.5 py-1.5 text-[12px] text-zinc-600 outline-none" value={role} onChange={(event) => setRole(event.target.value)}>
             <option value="">全部角色</option>
             {roles.map((item) => <option key={item.code} value={item.code}>{item.name}</option>)}
           </select>
-          <select className="rounded-md border border-zinc-200 bg-white px-2.5 py-1.5 text-[12px] text-zinc-600 outline-none" value={status} onChange={(event) => { setStatus(event.target.value as "" | "active" | "disabled"); setPage(1); }}>
+          <select className="rounded-md border border-zinc-200 bg-white px-2.5 py-1.5 text-[12px] text-zinc-600 outline-none" value={status} onChange={(event) => setStatus(event.target.value as "" | "active" | "disabled")}>
             <option value="">全部状态</option>
             <option value="active">正常</option>
             <option value="disabled">停用</option>
           </select>
-          <button type="button" className="rounded-md border border-zinc-200 px-2.5 py-1.5 text-[12px] text-zinc-500 transition hover:bg-zinc-50" onClick={() => { setKeyword(""); setDept(""); setRole(""); setStatus(""); setPage(1); }}>重置</button>
+          <button type="button" className="rounded-md border border-zinc-200 px-2.5 py-1.5 text-[12px] text-zinc-500 transition hover:bg-zinc-50" onClick={() => { setKeyword(""); setDept(""); setRole(""); setStatus(""); }}>重置</button>
         </div>
-        <div className="overflow-x-auto">
-          <table className="w-full min-w-245 border-collapse text-left">
-            <thead>
-              <tr className="border-b border-zinc-100 bg-zinc-50/60 text-[11px] text-zinc-500">
-                {["工号 / 账号", "姓名", "所属部门", "角色", "岗位", "手机号", "状态", "最近登录时间"].map((head) => <th key={head} className="px-4 py-2.5 font-medium">{head}</th>)}
-                <th className="px-4 py-2.5 text-right font-medium">操作</th>
-              </tr>
-            </thead>
-            <tbody className="text-[12px] text-zinc-700">
-              {rows.length ? rows.map((user) => (
-                <tr key={user.id} className="border-b border-zinc-50 last:border-0 hover:bg-zinc-50/60">
-                  <td className="px-4 py-2.5 font-mono text-[11px] text-zinc-500">{user.account}</td>
-                  <td className="px-4 py-2.5 font-medium text-zinc-900">{user.name}</td>
-                  <td className="px-4 py-2.5 text-zinc-600">{user.department_name || "—"}</td>
-                  <td className="px-4 py-2.5">
-                    <div className="flex flex-wrap gap-1">
-                      {user.role_names.length ? user.role_names.map((name, index) => (
-                        <span key={`${user.id}-${name}`} className={`rounded px-1.5 py-0.5 text-[10px] font-medium ${roleStyles[user.role_codes[index] ?? ""] ?? "bg-zinc-100 text-zinc-600"}`}>{name}</span>
-                      )) : <span className="text-zinc-400">未分配</span>}
-                    </div>
-                  </td>
-                  <td className="px-4 py-2.5 text-zinc-600">{user.post || "—"}</td>
-                  <td className="px-4 py-2.5 font-mono text-[11px] text-zinc-500">{user.phone || "—"}</td>
-                  <td className="px-4 py-2.5">
-                    {user.status === "active" ? (
-                      <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-medium text-emerald-700"><span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />正常</span>
-                    ) : (
-                      <span className="inline-flex items-center gap-1 rounded-full bg-zinc-100 px-2 py-0.5 text-[10px] font-medium text-zinc-500"><span className="h-1.5 w-1.5 rounded-full bg-zinc-400" />停用</span>
-                    )}
-                  </td>
-                  <td className="px-4 py-2.5 text-[11px] text-zinc-500">{formatTime(user.last_login_at)}</td>
-                  <td className="px-4 py-2.5">
-                    <div className="flex items-center justify-end gap-1">
-                      <button type="button" className="rounded px-1.5 py-1 text-[11px] text-zinc-600 transition hover:bg-zinc-100" onClick={() => { setFormError(""); setEditing(user); }}>编辑</button>
-                      <button type="button" className={`rounded px-1.5 py-1 text-[11px] ${user.status === "active" ? "text-amber-600 hover:bg-amber-50" : "text-emerald-600 hover:bg-emerald-50"}`} onClick={() => void toggleStatus(user)}>{user.status === "active" ? "停用" : "启用"}</button>
-                      <button type="button" className="rounded px-1.5 py-1 text-[11px] text-blue-600 transition hover:bg-blue-50" onClick={() => { setAssigning(user); setRoleCodes(user.role_codes); }}>分配角色</button>
-                      <button type="button" className="rounded px-1.5 py-1 text-[11px] text-zinc-500 transition hover:bg-zinc-100" onClick={() => { setFormError(""); setResetUser(user); }}>重置密码</button>
-                    </div>
-                  </td>
-                </tr>
-              )) : (
-                <tr><td colSpan={9} className="px-4 py-10 text-center text-[12px] text-zinc-400">未找到匹配的用户，请调整筛选条件</td></tr>
-              )}
-            </tbody>
-          </table>
-        </div>
-        <div className="flex flex-wrap items-center justify-between gap-2 border-t border-zinc-100 px-4 py-3">
-          <p className="text-[11px] text-zinc-400">共 {filtered.length} 条，第 {currentPage} / {totalPages} 页</p>
-          <div className="flex items-center gap-1.5">
-            <button type="button" className="flex h-7 w-7 items-center justify-center rounded-md border border-zinc-200 text-zinc-500 transition hover:bg-zinc-50 disabled:opacity-40" onClick={() => setPage(Math.max(1, currentPage - 1))} disabled={currentPage <= 1} aria-label="上一页"><ChevronLeft className="size-3.5" /></button>
-            {Array.from({ length: totalPages }, (_, index) => index + 1).map((number) => (
-              <button key={number} type="button" className={`flex h-7 min-w-7 items-center justify-center rounded-md px-2 text-[11px] ${number === currentPage ? "bg-zinc-900 text-white" : "border border-zinc-200 text-zinc-500 hover:bg-zinc-50"}`} onClick={() => setPage(number)}>{number}</button>
-            ))}
-            <button type="button" className="flex h-7 w-7 items-center justify-center rounded-md border border-zinc-200 text-zinc-500 transition hover:bg-zinc-50 disabled:opacity-40" onClick={() => setPage(Math.min(totalPages, currentPage + 1))} disabled={currentPage >= totalPages} aria-label="下一页"><ChevronRight className="size-3.5" /></button>
-          </div>
-        </div>
+        <DataTable table={userTable} empty="未找到匹配的用户，请调整筛选条件" />
+        <TablePagination table={userTable} />
       </div>
 
       {editing ? (

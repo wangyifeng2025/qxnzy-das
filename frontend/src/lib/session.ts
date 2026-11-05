@@ -1,11 +1,21 @@
 export type Role = "teacher" | "staff" | "admin";
 
+export type DatasetAccess = {
+  code: string;
+  name: string;
+  category?: string;
+  can_fill: boolean;
+  can_review: boolean;
+};
+
 export type SessionUser = {
   role: Role;
   name: string;
   dept: string;
   account: string;
   post: string;
+  roleCodes: string[];
+  datasets: DatasetAccess[];
 };
 
 export const ROLE_LABEL: Record<Role, string> = {
@@ -32,6 +42,7 @@ export type AuthUser = {
   post: string | null;
   role_codes: string[];
   is_superuser: boolean;
+  datasets?: DatasetAccess[];
 };
 
 export function sessionFromAuth(user: AuthUser): SessionUser {
@@ -47,6 +58,8 @@ export function sessionFromAuth(user: AuthUser): SessionUser {
     dept: user.department_name || "未分配部门",
     account: user.account,
     post: user.post || ROLE_LABEL[role],
+    roleCodes: user.role_codes,
+    datasets: user.datasets ?? [],
   };
 }
 
@@ -57,7 +70,7 @@ export function readSession(): SessionUser | null {
   try {
     const user = JSON.parse(window.localStorage.getItem(USER_KEY) ?? "null") as SessionUser | null;
     if (!user?.name || user.role !== role) return null;
-    return user;
+    return { ...user, roleCodes: user.roleCodes ?? [], datasets: user.datasets ?? [] };
   } catch {
     return null;
   }

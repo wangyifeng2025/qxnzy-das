@@ -1,10 +1,8 @@
 import type { LucideIcon } from "lucide-react";
 import {
-  BookMarked,
   BookOpen,
   Braces,
   ClipboardCheck,
-  GraduationCap,
   LayoutDashboard,
   ListChecks,
   ShieldCheck,
@@ -14,7 +12,7 @@ import {
   Workflow,
 } from "lucide-react";
 
-import type { Role } from "@/lib/session";
+import type { Role, SessionUser } from "@/lib/session";
 
 export type NavChild = {
   href: string;
@@ -62,30 +60,42 @@ export function canFillTable(role: Role, tableId: string) {
   return true;
 }
 
-export function navigationFor(role: Role): NavGroup[] {
-  const workbench =
-    role === "admin"
+function fillHref(code: string) {
+  return code === "ODS_JZGJBSJ" ? "/fill?table=staff" : `/fill?table=${code}`;
+}
+
+export function navigationFor(user: SessionUser): NavGroup[] {
+  const role = user.role;
+  const auditor = user.roleCodes.includes("auditor");
+  const workbench = auditor
+    ? { href: "/review", label: "业务部门工作台", icon: LayoutDashboard }
+    : role === "admin"
       ? { href: "/home", label: "信息中心工作台", icon: LayoutDashboard }
       : role === "staff"
-        ? { href: "/review", label: "部门管理员工作台", icon: LayoutDashboard }
+        ? { href: "/review", label: "系部工作台", icon: LayoutDashboard }
         : { href: "/my-fill", label: "我的工作台", icon: LayoutDashboard };
 
-  const collectionItems: NavItem[] = [
-    {
+  const fillable = user.datasets.filter((item) => item.can_fill);
+  const collectionItems: NavItem[] = [];
+  const academic = fillable.filter((item) => item.category === "academic");
+  const teacher = fillable.filter((item) => item.category !== "academic");
+  if (teacher.length > 0) {
+    collectionItems.push({
       label: "教师信息采集",
       icon: Users,
-      badge: fillScopeLabel(role),
+      badge: auditor ? "全校范围" : fillScopeLabel(role),
       badgeClass: "bg-white text-zinc-500",
-      children: TEACHER_FILL_TABLES,
-    },
-  ];
-
-  if (role !== "teacher") {
-    collectionItems.push(
-      { href: "/fill?table=major", label: "专业设置数据", icon: BookOpen },
-      { href: "/fill?table=course", label: "课程数据", icon: BookMarked },
-      { href: "/fill?table=student", label: "高职在校生数据", icon: GraduationCap },
-    );
+      children: teacher.map((item) => ({ href: fillHref(item.code), label: item.name })),
+    });
+  }
+  if (academic.length > 0) {
+    collectionItems.push({
+      label: "教务数据采集",
+      icon: BookOpen,
+      badge: auditor ? "全校范围" : fillScopeLabel(role),
+      badgeClass: "bg-white text-zinc-500",
+      children: academic.map((item) => ({ href: fillHref(item.code), label: item.name })),
+    });
   }
 
   collectionItems.push(
@@ -98,15 +108,16 @@ export function navigationFor(role: Role): NavGroup[] {
     },
     {
       href: "/my-fill",
-      label: role === "staff" ? "本部门填报跟踪" : "我的填报",
+      label: role === "teacher" ? "我的填报" : "填报跟踪",
       icon: ClipboardCheck,
     },
   );
 
-  if (role === "staff" || role === "admin") {
+  // 信息中心在各数据表页面直接批量审核发布，不单设审核菜单
+  if (role !== "admin" && (role === "staff" || user.datasets.some((item) => item.can_review))) {
     collectionItems.push({
       href: "/review",
-      label: role === "admin" ? "审核与复核导入" : "审核与批量导入",
+      label: auditor ? "业务部门审核" : "系部审核",
       icon: ListChecks,
     });
   }
@@ -157,7 +168,7 @@ export const ROUTE_ACCESS: Record<string, Role[]> = {
   "/fill": ["teacher", "staff", "admin"],
   "/ai-parse": ["teacher", "staff", "admin"],
   "/my-fill": ["teacher", "staff", "admin"],
-  "/review": ["staff", "admin"],
+  "/review": ["staff"],
   "/schema": ["admin"],
   "/api-tasks": ["admin"],
   "/open-api": ["admin"],

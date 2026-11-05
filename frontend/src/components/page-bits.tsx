@@ -83,12 +83,44 @@ export function StatusPill({ children, tone }: { children: React.ReactNode; tone
     bad: "bg-rose-50 text-rose-700",
     muted: "bg-zinc-100 text-zinc-600",
   }[tone];
-  return <span className={`inline-flex rounded-full px-2 py-0.5 text-[10px] font-medium ${toneClass}`}>{children}</span>;
+  return (
+    <span className={`inline-flex shrink-0 whitespace-nowrap rounded-full px-2 py-0.5 text-[10px] font-medium ${toneClass}`}>
+      {children}
+    </span>
+  );
 }
 
 export const primaryButton =
-  "inline-flex h-9 items-center gap-2 rounded-md bg-zinc-900 px-3.5 text-xs font-medium text-white shadow-sm transition hover:bg-zinc-800";
+  "inline-flex h-9 items-center gap-2 rounded-md bg-zinc-900 px-3.5 text-xs font-medium text-white shadow-sm transition hover:bg-zinc-800 disabled:cursor-not-allowed disabled:opacity-45 disabled:hover:bg-zinc-900";
 export const ghostButton =
-  "inline-flex h-9 items-center gap-2 rounded-md border border-zinc-200 bg-white px-3 text-xs font-medium text-zinc-700 transition hover:bg-zinc-50";
+  "inline-flex h-9 items-center gap-2 rounded-md border border-zinc-200 bg-white px-3 text-xs font-medium text-zinc-700 transition hover:bg-zinc-50 disabled:cursor-not-allowed disabled:opacity-45 disabled:hover:bg-white";
 export const fieldClass =
   "h-9 w-full rounded-md border border-zinc-200 bg-white px-3 text-[12px] text-zinc-800 outline-none transition focus:border-zinc-400 focus:ring-2 focus:ring-zinc-100";
+
+/** 进度条：用于批量写入等耗时操作，value / max 为已完成与总量。 */
+export function ProgressBar({
+  value,
+  max,
+  className = "",
+  label,
+}: {
+  value: number;
+  max: number;
+  className?: string;
+  label?: string;
+}) {
+  const safeMax = max > 0 ? max : 1;
+  const percent = Math.min(100, Math.max(0, Math.round((value / safeMax) * 100)));
+  return (
+    <div
+      role="progressbar"
+      aria-valuemin={0}
+      aria-valuemax={safeMax}
+      aria-valuenow={Math.min(value, safeMax)}
+      aria-valuetext={label ?? `${percent}%`}
+      className={`h-1.5 w-full overflow-hidden rounded-full bg-zinc-200 ${className}`}
+    >
+      <div className="h-full rounded-full bg-zinc-900 transition-[width] duration-300 ease-out" style={{ width: `${percent}%` }} />
+    </div>
+  );
+}

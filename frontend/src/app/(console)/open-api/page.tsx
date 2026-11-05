@@ -1,11 +1,22 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
+import { allRowsPagination, createAppColumnHelper, DataTable, useAppTable } from "@/components/data-table";
 import { KpiCard, PageIntro, Panel, StatusPill } from "@/components/page-bits";
 import { useToast } from "@/components/toast";
 
-const apis: string[][] = [];
+type ApiItem = {
+  name: string;
+  path: string;
+  auth: string;
+  calls: string;
+  latency: string;
+};
+
+const apis: ApiItem[] = [];
+
+const apiHelper = createAppColumnHelper<ApiItem>();
 
 const applications: string[][] = [];
 
@@ -15,7 +26,35 @@ export default function OpenApiPage() {
   const toast = useToast();
   const [tab, setTab] = useState<(typeof tabs)[number]>("接口目录");
   const [auth, setAuth] = useState("全部");
-  const visible = apis.filter((item) => auth === "全部" || item[2] === auth);
+  const visible = useMemo(() => apis.filter((item) => auth === "全部" || item.auth === auth), [auth]);
+  const apiColumns = useMemo(
+    () =>
+      apiHelper.columns([
+        apiHelper.accessor("name", { header: "接口 / 数据表", meta: { cellClassName: "font-medium" } }),
+        apiHelper.accessor("path", {
+          header: "请求路径",
+          cell: ({ getValue }) => <span className="font-mono text-[11px] text-zinc-500">GET {getValue()}</span>,
+        }),
+        apiHelper.accessor("auth", { header: "授权方式" }),
+        apiHelper.accessor("calls", { header: "今日调用" }),
+        apiHelper.accessor("latency", { header: "平均延迟" }),
+        apiHelper.display({
+          id: "actions",
+          header: "操作",
+          cell: ({ row }) => (
+            <button type="button" className="text-[11px] font-medium" onClick={() => toast(`已复制 ${row.original.path}`)}>
+              复制
+            </button>
+          ),
+        }),
+      ]),
+    [toast],
+  );
+  const apiTable = useAppTable({
+    data: visible,
+    columns: apiColumns,
+    initialState: { pagination: allRowsPagination },
+  });
 
   return (
     <div className="mx-auto max-w-400 p-5 xl:p-6">
@@ -52,31 +91,7 @@ export default function OpenApiPage() {
             <option>OAuth 2.0</option>
           </select>
         }>
-          <div className="overflow-x-auto">
-            <table className="w-full min-w-190 text-left text-[12px]">
-              <thead className="bg-zinc-50 text-[11px] text-zinc-500">
-                <tr>
-                  {["接口 / 数据表", "请求路径", "授权方式", "今日调用", "平均延迟", "操作"].map((head) => (
-                    <th key={head} className="px-4 py-2.5 font-medium">{head}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {visible.map((row) => (
-                  <tr key={row[1]} className="border-t border-zinc-100">
-                    <td className="px-4 py-2.5 font-medium">{row[0]}</td>
-                    <td className="px-4 py-2.5 font-mono text-[11px] text-zinc-500">GET {row[1]}</td>
-                    <td className="px-4 py-2.5">{row[2]}</td>
-                    <td className="px-4 py-2.5">{row[3]}</td>
-                    <td className="px-4 py-2.5">{row[4]}</td>
-                    <td className="px-4 py-2.5">
-                      <button type="button" className="text-[11px] font-medium" onClick={() => toast(`已复制 ${row[1]}`)}>复制</button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          <DataTable table={apiTable} empty="尚未开放接口" className="min-w-190" />
         </Panel>
       ) : null}
 

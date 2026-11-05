@@ -65,38 +65,14 @@ export const DATA_TABLES: DataTableDef[] = [
   {
     id: "staff",
     name: "教职工基本信息表",
-    dept: "人事处",
+    dept: "组织人事部",
     code: "ODS_JZGJBSJ",
     kind: "single",
     collected: "0",
     expected: "0",
     rate: "—",
     status: "进行中",
-    sections: [
-      {
-        title: "身份信息",
-        desc: "每人仅保留一条，更新后覆盖原记录",
-        fields: [
-          { label: "工号", key: "staffNo", type: "text", required: true, hint: "主键，提交后不可修改" },
-          { label: "姓名", key: "name", type: "text", required: true },
-          { label: "性别", key: "gender", type: "select", required: true, options: ["男", "女"] },
-          { label: "出生日期", key: "birthday", type: "date", required: true },
-          { label: "民族", key: "ethnicity", type: "select", options: ["汉族", "布依族", "苗族", "侗族", "彝族", "其他"] },
-          { label: "身份证号", key: "idCard", type: "text", required: true },
-        ],
-      },
-      {
-        title: "岗位信息",
-        fields: [
-          { label: "所属系部", key: "department", type: "select", required: true, options: depts },
-          { label: "岗位类别", key: "postType", type: "select", required: true, options: ["专任教师", "辅导员", "行政管理人员", "教辅人员"] },
-          { label: "职称", key: "title", type: "select", required: true, options: ["教授", "副教授", "讲师", "助教", "未定级"] },
-          { label: "学历", key: "education", type: "select", required: true, options: ["博士研究生", "硕士研究生", "本科", "专科"] },
-          { label: "入职日期", key: "hireDate", type: "date", required: true },
-          { label: "是否双师型教师", key: "dualTeacher", type: "select", options: ["是", "否"] },
-        ],
-      },
-    ],
+    sections: [],
   },
   {
     id: "training",

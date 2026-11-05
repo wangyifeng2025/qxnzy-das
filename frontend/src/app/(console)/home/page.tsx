@@ -3,14 +3,42 @@
 import { Download, Plus } from "lucide-react";
 import Link from "next/link";
 
+import { allRowsPagination, createAppColumnHelper, DataTable, useAppTable } from "@/components/data-table";
 import { ghostButton, KpiCard, PageIntro, Panel, primaryButton, StatusPill } from "@/components/page-bits";
 import { useToast } from "@/components/toast";
-import { DATA_TABLES } from "@/lib/tables";
+import { DATA_TABLES, type DataTableDef } from "@/lib/tables";
 
 const activities: string[][] = [];
 
+const homeHelper = createAppColumnHelper<DataTableDef>();
+const progressColumns = homeHelper.columns([
+  homeHelper.accessor("name", { header: "数据表", meta: { cellClassName: "font-medium text-zinc-800" } }),
+  homeHelper.accessor("dept", { header: "责任部门", meta: { cellClassName: "text-zinc-500" } }),
+  homeHelper.display({
+    id: "collected",
+    header: "已采集 / 应采集",
+    cell: ({ row }) => (
+      <span className="text-zinc-600">
+        {row.original.collected} / {row.original.expected}
+      </span>
+    ),
+  }),
+  homeHelper.accessor("rate", { header: "完成率" }),
+  homeHelper.accessor("status", {
+    header: "状态",
+    cell: ({ getValue }) => (
+      <StatusPill tone={getValue() === "已达标" ? "ok" : getValue() === "需关注" ? "warn" : "run"}>{getValue()}</StatusPill>
+    ),
+  }),
+]);
+
 export default function HomePage() {
   const toast = useToast();
+  const progressTable = useAppTable({
+    data: DATA_TABLES,
+    columns: progressColumns,
+    initialState: { pagination: allRowsPagination },
+  });
   return (
     <div className="mx-auto max-w-400 p-5 xl:p-6">
       <PageIntro
@@ -43,34 +71,7 @@ export default function HomePage() {
 
       <div className="mt-4 grid grid-cols-1 gap-4 xl:grid-cols-[minmax(0,1.4fr)_360px]">
         <Panel title="12 张数据表采集进度" description="统计口径：有效记录数 / 本学期应采集记录数">
-          <div className="overflow-x-auto">
-            <table className="w-full min-w-160 text-left text-[12px]">
-              <thead className="bg-zinc-50 text-[11px] text-zinc-500">
-                <tr>
-                  <th className="px-4 py-2.5 font-medium">数据表</th>
-                  <th className="px-4 py-2.5 font-medium">责任部门</th>
-                  <th className="px-4 py-2.5 font-medium">已采集 / 应采集</th>
-                  <th className="px-4 py-2.5 font-medium">完成率</th>
-                  <th className="px-4 py-2.5 font-medium">状态</th>
-                </tr>
-              </thead>
-              <tbody>
-                {DATA_TABLES.map((table) => (
-                  <tr key={table.id} className="border-t border-zinc-100">
-                    <td className="px-4 py-2.5 font-medium text-zinc-800">{table.name}</td>
-                    <td className="px-4 py-2.5 text-zinc-500">{table.dept}</td>
-                    <td className="px-4 py-2.5 text-zinc-600">
-                      {table.collected} / {table.expected}
-                    </td>
-                    <td className="px-4 py-2.5">{table.rate}</td>
-                    <td className="px-4 py-2.5">
-                      <StatusPill tone={table.status === "已达标" ? "ok" : table.status === "需关注" ? "warn" : "run"}>{table.status}</StatusPill>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          <DataTable table={progressTable} empty="暂无采集进度" className="min-w-160" />
           <p className="border-t border-zinc-100 px-4 py-2.5 text-[10px] text-zinc-400">共 {DATA_TABLES.length} 张数据表 · 尚无采集进度</p>
         </Panel>
 
@@ -124,7 +125,7 @@ export default function HomePage() {
               ["/ai-parse", "AI 文件解析", "上传表格后确认入库"],
               ["/api-tasks", "API 采集", "尚未配置任务"],
               ["/open-api", "开放接口", "尚未开放"],
-              ["/review", "审核本部门", "暂无待审核"],
+              ["/quality", "采集日志与质量", "查看数据质量"],
               ["/my-fill", "我的填报", "暂无填报记录"],
             ].map(([href, title, text]) => (
               <Link key={href} href={href} className="rounded-md border border-zinc-200 px-3 py-3 hover:bg-zinc-50">

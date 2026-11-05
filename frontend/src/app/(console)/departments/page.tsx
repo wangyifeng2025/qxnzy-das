@@ -1,9 +1,9 @@
 "use client";
 
-import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 
 import { ApiConnect } from "@/components/api-connect";
+import { createAppColumnHelper, DataTable, TablePagination, useAppTable } from "@/components/data-table";
 import { FormCombobox } from "@/components/form-combobox";
 import {
   fieldClass,
@@ -47,6 +47,8 @@ const kindFilters: Array<{ value: "all" | DepartmentKind; label: string }> = [
   { value: "other", label: "其他" },
 ];
 
+const deptHelper = createAppColumnHelper<Department>();
+
 function messageOf(error: unknown) {
   return error instanceof ApiError ? error.message : "请求失败";
 }
@@ -80,7 +82,6 @@ export default function DepartmentsPage() {
   const [keyword, setKeyword] = useState("");
   const [kind, setKind] = useState<"all" | DepartmentKind>("all");
   const [showInactive, setShowInactive] = useState(true);
-  const [page, setPage] = useState(1);
   const [editing, setEditing] = useState<Editing | null>(null);
   const [error, setError] = useState("");
   const [loadError, setLoadError] = useState("");
@@ -130,12 +131,103 @@ export default function DepartmentsPage() {
       .sort((a, b) => a.sortOrder - b.sortOrder || a.id - b.id);
   }, [departments, keyword, kind, showInactive]);
 
-  const totalPages = Math.max(1, Math.ceil(rows.length / pageSize));
-  const currentPage = Math.min(page, totalPages);
-  const pageRows = rows.slice(
-    (currentPage - 1) * pageSize,
-    currentPage * pageSize,
+  const columns = useMemo(
+    () =>
+      deptHelper.columns([
+        deptHelper.accessor("code", {
+          header: "编码",
+          meta: { cellClassName: "font-mono text-[11px] text-zinc-500" },
+        }),
+        deptHelper.accessor("name", {
+          header: "规范名称",
+          meta: { cellClassName: "font-medium" },
+        }),
+        deptHelper.accessor("shortName", {
+          header: "简称",
+          cell: ({ getValue }) => getValue() || "—",
+          meta: { cellClassName: "text-zinc-500" },
+        }),
+        deptHelper.accessor("kind", {
+          header: "类型",
+          cell: ({ getValue }) => (
+            <StatusPill
+              tone={
+                getValue() === "teaching"
+                  ? "run"
+                  : getValue() === "functional"
+                    ? "warn"
+                    : "muted"
+              }
+            >
+              {DEPARTMENT_KIND_LABEL[getValue()]}
+            </StatusPill>
+          ),
+        }),
+        deptHelper.accessor("leader", {
+          header: "负责人",
+          cell: ({ getValue }) => getValue() || "—",
+        }),
+        deptHelper.accessor("dataManager", {
+          header: "数据管理员",
+          cell: ({ getValue }) => getValue() || "—",
+        }),
+        deptHelper.accessor("phone", {
+          header: "联系电话",
+          cell: ({ getValue }) => getValue() || "—",
+          meta: { cellClassName: "font-mono text-[11px]" },
+        }),
+        deptHelper.accessor("userCount", { header: "账号数" }),
+        deptHelper.accessor("sortOrder", {
+          header: "排序",
+          meta: { cellClassName: "text-zinc-500" },
+        }),
+        deptHelper.accessor("isActive", {
+          header: "状态",
+          cell: ({ getValue }) => (
+            <StatusPill tone={getValue() ? "ok" : "muted"}>
+              {getValue() ? "启用" : "停用"}
+            </StatusPill>
+          ),
+        }),
+        deptHelper.display({
+          id: "actions",
+          header: "操作",
+          meta: { headClassName: "text-right", cellClassName: "text-right" },
+          cell: ({ row }) => (
+            <div className="flex gap-3 text-[11px] font-medium">
+              <button
+                type="button"
+                onClick={() => {
+                  setError("");
+                  setEditing({ mode: "edit", department: row.original });
+                }}
+              >
+                编辑
+              </button>
+              <button type="button" onClick={() => void toggleActive(row.original)}>
+                {row.original.isActive ? "停用" : "启用"}
+              </button>
+              <button
+                type="button"
+                className="text-rose-700"
+                onClick={() => void remove(row.original)}
+              >
+                删除
+              </button>
+            </div>
+          ),
+        }),
+      ]),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [],
   );
+
+  const deptTable = useAppTable({
+    data: rows,
+    columns,
+    initialState: { pagination: { pageIndex: 0, pageSize } },
+  });
+
   const teachingCount = departments.filter(
     (item) => item.kind === "teaching",
   ).length;
@@ -145,17 +237,11 @@ export default function DepartmentsPage() {
   const activeCount = departments.filter((item) => item.isActive).length;
   const totalUsers = departments.reduce((sum, item) => sum + item.userCount, 0);
 
-  async function reload(focusCode?: string) {
+  async function reload() {
     const next = (await api<DepartmentDto[]>("/api/departments")).map(
       toDepartment,
     );
     setDepartments(next);
-    if (!focusCode) return;
-    const ordered = [...next].sort(
-      (a, b) => a.sortOrder - b.sortOrder || a.id - b.id,
-    );
-    const index = ordered.findIndex((item) => item.code === focusCode);
-    if (index >= 0) setPage(Math.floor(index / pageSize) + 1);
   }
 
   async function toggleActive(target: Department) {
@@ -222,7 +308,7 @@ export default function DepartmentsPage() {
         });
         toast(`已新增 ${name}`);
       }
-      await reload(code);
+      await reload();
       setEditing(null);
       setError("");
     } catch (reason) {
@@ -299,20 +385,14 @@ export default function DepartmentsPage() {
             className={`${fieldClass} max-w-64`}
             placeholder="搜索编码、名称或简称"
             value={keyword}
-            onChange={(event) => {
-              setKeyword(event.target.value);
-              setPage(1);
-            }}
+            onChange={(event) => setKeyword(event.target.value)}
           />
           <div className="flex gap-1">
             {kindFilters.map((item) => (
               <button
                 key={item.value}
                 type="button"
-                onClick={() => {
-                  setKind(item.value);
-                  setPage(1);
-                }}
+                onClick={() => setKind(item.value)}
                 className={`rounded-md px-3 py-1.5 text-[12px] ${
                   kind === item.value
                     ? "bg-zinc-900 text-white"
@@ -328,153 +408,18 @@ export default function DepartmentsPage() {
               type="checkbox"
               className="size-3.5"
               checked={showInactive}
-              onChange={(event) => {
-                setShowInactive(event.target.checked);
-                setPage(1);
-              }}
+              onChange={(event) => setShowInactive(event.target.checked)}
             />
             显示已停用
           </label>
         </div>
-        <div className="min-h-0 flex-1 overflow-auto">
-          <table className="w-full text-left text-[12px]">
-            <thead className="sticky top-0 z-10 bg-zinc-50 text-[11px] text-zinc-500">
-              <tr>
-                {[
-                  "编码",
-                  "规范名称",
-                  "简称",
-                  "类型",
-                  "负责人",
-                  "数据管理员",
-                  "联系电话",
-                  "账号数",
-                  "排序",
-                  "状态",
-                  "操作",
-                ].map((head) => (
-                  <th key={head} className="px-4 py-2.5 font-medium">
-                    {head}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {pageRows.length ? (
-                pageRows.map((item) => (
-                  <tr key={item.id} className="border-t border-zinc-100">
-                    <td className="px-4 py-2.5 font-mono text-[11px] text-zinc-500">
-                      {item.code}
-                    </td>
-                    <td className="px-4 py-2.5 font-medium">{item.name}</td>
-                    <td className="px-4 py-2.5 text-zinc-500">
-                      {item.shortName || "—"}
-                    </td>
-                    <td className="px-4 py-2.5">
-                      <StatusPill
-                        tone={
-                          item.kind === "teaching"
-                            ? "run"
-                            : item.kind === "functional"
-                              ? "warn"
-                              : "muted"
-                        }
-                      >
-                        {DEPARTMENT_KIND_LABEL[item.kind]}
-                      </StatusPill>
-                    </td>
-                    <td className="px-4 py-2.5">{item.leader || "—"}</td>
-                    <td className="px-4 py-2.5">{item.dataManager || "—"}</td>
-                    <td className="px-4 py-2.5 font-mono text-[11px]">
-                      {item.phone || "—"}
-                    </td>
-                    <td className="px-4 py-2.5">{item.userCount}</td>
-                    <td className="px-4 py-2.5 text-zinc-500">
-                      {item.sortOrder}
-                    </td>
-                    <td className="px-4 py-2.5">
-                      <StatusPill tone={item.isActive ? "ok" : "muted"}>
-                        {item.isActive ? "启用" : "停用"}
-                      </StatusPill>
-                    </td>
-                    <td className="px-4 py-2.5">
-                      <div className="flex gap-3 text-[11px] font-medium">
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setError("");
-                            setEditing({ mode: "edit", department: item });
-                          }}
-                        >
-                          编辑
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => void toggleActive(item)}
-                        >
-                          {item.isActive ? "停用" : "启用"}
-                        </button>
-                        <button
-                          type="button"
-                          className="text-rose-700"
-                          onClick={() => void remove(item)}
-                        >
-                          删除
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))
-              ) : (
-                <tr>
-                  <td
-                    colSpan={11}
-                    className="px-4 py-10 text-center text-zinc-400"
-                  >
-                    没有符合条件的系部或部门
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
-        <div className="flex shrink-0 flex-wrap items-center justify-between gap-2 border-t border-zinc-100 px-4 py-3">
-          <p className="text-[11px] text-zinc-400">
-            共 {rows.length} 条，第 {currentPage} / {totalPages} 页
-          </p>
-          <div className="flex items-center gap-1.5">
-            <button
-              type="button"
-              className="flex h-7 w-7 items-center justify-center rounded-md border border-zinc-200 text-zinc-500 transition hover:bg-zinc-50 disabled:opacity-40"
-              onClick={() => setPage(Math.max(1, currentPage - 1))}
-              disabled={currentPage <= 1}
-              aria-label="上一页"
-            >
-              <ChevronLeft className="size-3.5" />
-            </button>
-            {Array.from({ length: totalPages }, (_, index) => index + 1).map(
-              (number) => (
-                <button
-                  key={number}
-                  type="button"
-                  className={`flex h-7 min-w-7 items-center justify-center rounded-md px-2 text-[11px] ${number === currentPage ? "bg-zinc-900 text-white" : "border border-zinc-200 text-zinc-500 hover:bg-zinc-50"}`}
-                  onClick={() => setPage(number)}
-                >
-                  {number}
-                </button>
-              ),
-            )}
-            <button
-              type="button"
-              className="flex h-7 w-7 items-center justify-center rounded-md border border-zinc-200 text-zinc-500 transition hover:bg-zinc-50 disabled:opacity-40"
-              onClick={() => setPage(Math.min(totalPages, currentPage + 1))}
-              disabled={currentPage >= totalPages}
-              aria-label="下一页"
-            >
-              <ChevronRight className="size-3.5" />
-            </button>
-          </div>
-        </div>
+        <DataTable
+          table={deptTable}
+          empty="没有符合条件的系部或部门"
+          stickyHeader
+          containerClassName="min-h-0 flex-1 overflow-auto"
+        />
+        <TablePagination table={deptTable} />
       </section>
 
       {editing ? (

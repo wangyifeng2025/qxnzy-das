@@ -48,11 +48,27 @@ def user_to_read(user: User, *, department_name: str | None = None) -> UserRead:
 
 
 def user_to_current(user: User) -> CurrentUser:
+    from app.datasets.access import can_fill, can_review_dataset, is_center
+    from app.datasets.registry import DATASETS
+    from app.schemas.records import DatasetAccess
+
     base = user_to_read(user)
+    datasets = [
+        DatasetAccess(
+            code=spec.code,
+            name=spec.name,
+            category=spec.category,
+            can_fill=can_fill(user, spec),
+            can_review=can_review_dataset(user, spec),
+        )
+        for spec in DATASETS.values()
+        if can_fill(user, spec) or can_review_dataset(user, spec) or is_center(user)
+    ]
     return CurrentUser(
         **base.model_dump(),
         permissions=sorted(user.permission_codes),
         data_scope=user.data_scope,
+        datasets=datasets,
     )
 
 

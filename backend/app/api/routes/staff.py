@@ -33,9 +33,7 @@ WriteStaff = Annotated[User, Depends(require_permissions("fill:submit"))]
 
 
 async def _load(session: DbSession, user: User, record_id: str) -> StaffMember:
-    row = await session.scalar(
-        scoped_query(user).where(StaffMember.ZJSJWYXBS == record_id)
-    )
+    row = await session.scalar(scoped_query(user).where(StaffMember.ZJSJWYXBS == record_id))
     if row is None:
         raise HTTPException(status.HTTP_404_NOT_FOUND, detail="教职工基本信息不存在或无权查看")
     return row

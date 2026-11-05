@@ -1,14 +1,74 @@
 "use client";
 
+import { useMemo } from "react";
+
+import { allRowsPagination, createAppColumnHelper, DataTable, useAppTable } from "@/components/data-table";
 import { KpiCard, PageIntro, Panel, primaryButton, StatusPill } from "@/components/page-bits";
 import { useToast } from "@/components/toast";
 
-const tasks: string[][] = [];
+type ApiTask = {
+  name: string;
+  source: string;
+  target: string;
+  schedule: string;
+  last_run: string;
+  fetched: string;
+  status: string;
+};
+
+const tasks: ApiTask[] = [];
+
+const taskHelper = createAppColumnHelper<ApiTask>();
 
 const runs: string[][] = [];
 
 export default function ApiTasksPage() {
   const toast = useToast();
+  const taskColumns = useMemo(
+    () =>
+      taskHelper.columns([
+        taskHelper.display({
+          id: "task",
+          header: "任务 / 数据源",
+          cell: ({ row }) => (
+            <div>
+              <p className="font-medium">{row.original.name}</p>
+              <p className="text-[10px] text-zinc-400">{row.original.source}</p>
+            </div>
+          ),
+        }),
+        taskHelper.accessor("target", { header: "目标数据表" }),
+        taskHelper.accessor("schedule", { header: "调度周期" }),
+        taskHelper.accessor("last_run", { header: "最近运行" }),
+        taskHelper.accessor("fetched", { header: "本次拉取" }),
+        taskHelper.accessor("status", {
+          header: "状态",
+          cell: ({ getValue }) => (
+            <StatusPill tone={getValue() === "异常" ? "bad" : getValue() === "执行中" ? "run" : "ok"}>{getValue()}</StatusPill>
+          ),
+        }),
+        taskHelper.display({
+          id: "actions",
+          header: "操作",
+          meta: { cellClassName: "text-right" },
+          cell: ({ row }) => (
+            <button
+              type="button"
+              className="text-[11px] font-medium"
+              onClick={() => toast(row.original.status === "异常" ? "已重新发起认证并排队重试" : `已触发：${row.original.name}`)}
+            >
+              {row.original.status === "异常" ? "重试" : "立即运行"}
+            </button>
+          ),
+        }),
+      ]),
+    [toast],
+  );
+  const taskTable = useAppTable({
+    data: tasks,
+    columns: taskColumns,
+    initialState: { pagination: allRowsPagination },
+  });
   return (
     <div className="mx-auto max-w-400 p-5 xl:p-6">
       <PageIntro
@@ -28,39 +88,7 @@ export default function ApiTasksPage() {
         <KpiCard label="数据源连接" value="0" note="尚未接入" />
       </div>
       <Panel className="mt-4" title="采集任务列表" description="按业务系统和数据表配置自动同步规则">
-        <div className="overflow-x-auto">
-          <table className="w-full min-w-215 text-left text-[12px]">
-            <thead className="bg-zinc-50 text-[11px] text-zinc-500">
-              <tr>
-                {["任务 / 数据源", "目标数据表", "调度周期", "最近运行", "本次拉取", "状态", "操作"].map((head) => (
-                  <th key={head} className="px-4 py-2.5 font-medium">{head}</th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {tasks.map((row) => (
-                <tr key={row[0]} className="border-t border-zinc-100">
-                  <td className="px-4 py-2.5">
-                    <p className="font-medium">{row[0]}</p>
-                    <p className="text-[10px] text-zinc-400">{row[1]}</p>
-                  </td>
-                  <td className="px-4 py-2.5">{row[2]}</td>
-                  <td className="px-4 py-2.5">{row[3]}</td>
-                  <td className="px-4 py-2.5">{row[4]}</td>
-                  <td className="px-4 py-2.5">{row[5]}</td>
-                  <td className="px-4 py-2.5">
-                    <StatusPill tone={row[6] === "异常" ? "bad" : row[6] === "执行中" ? "run" : "ok"}>{row[6]}</StatusPill>
-                  </td>
-                  <td className="px-4 py-2.5">
-                    <button type="button" className="text-[11px] font-medium" onClick={() => toast(row[6] === "异常" ? "已重新发起认证并排队重试" : `已触发：${row[0]}`)}>
-                      {row[6] === "异常" ? "重试" : "立即运行"}
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <DataTable table={taskTable} empty="尚未配置采集任务" className="min-w-215" />
       </Panel>
       <div className="mt-4 grid gap-4 lg:grid-cols-2">
         <Panel title="数据源健康状态" description="最近 5 分钟探测结果">

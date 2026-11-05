@@ -29,23 +29,26 @@ function ShellFrame({ user, children }: { user: SessionUser; children: React.Rea
   const table = searchParams.get("table");
   const router = useRouter();
   const toast = useToast();
-  const groups = navigationFor(user.role);
+  const groups = navigationFor(user);
   const [collectOpen, setCollectOpen] = useState(true);
   const links = navLinks(groups);
   const matched = links.filter((item) => linkActive(item.href, pathname, table));
   const current = matched.find((item) => !item.label.endsWith("工作台")) ?? matched[0];
   const meta = ROUTE_TITLE[pathname] ?? { crumb: "数据采集", heading: "2025—2026 学年第一学期" };
+  const auditor = user.roleCodes.includes("auditor");
   const heading =
     pathname === "/my-fill"
-      ? user.role === "staff"
-        ? "本部门填报跟踪"
-        : user.role === "admin"
-          ? "全校填报跟踪"
+      ? user.role === "admin"
+        ? "全校填报跟踪"
+        : user.role === "staff"
+          ? "填报跟踪"
           : "教师个人工作台"
       : pathname === "/review"
         ? user.role === "admin"
           ? "全校审核工作台"
-          : `${user.dept} · 部门管理员工作台`
+          : auditor
+            ? "业务部门工作台"
+            : `${user.dept} · 系部审核工作台`
         : meta.heading;
   const allowed = ROUTE_ACCESS[pathname]?.includes(user.role) ?? false;
   const scope =

@@ -1,26 +1,54 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
+import { allRowsPagination, createAppColumnHelper, DataTable, useAppTable } from "@/components/data-table";
 import { FormCombobox } from "@/components/form-combobox";
 import { fieldClass, PageIntro, Panel, primaryButton, StatusPill } from "@/components/page-bits";
 import { useToast } from "@/components/toast";
 import { DATA_TABLES, SCHEMA_FIELDS } from "@/lib/tables";
 
+type SchemaField = { cn: string; code: string; type: string; required: boolean; source: string; fill: string };
+
+const schemaHelper = createAppColumnHelper<SchemaField>();
+const schemaColumns = schemaHelper.columns([
+  schemaHelper.accessor("cn", { header: "字段名称", meta: { cellClassName: "font-medium text-zinc-900" } }),
+  schemaHelper.accessor("code", { header: "字段编码", meta: { cellClassName: "font-mono text-[11px] text-zinc-500" } }),
+  schemaHelper.accessor("type", { header: "数据类型" }),
+  schemaHelper.accessor("required", { header: "必填", cell: ({ getValue }) => (getValue() ? "是" : "否") }),
+  schemaHelper.accessor("source", { header: "来源渠道" }),
+  schemaHelper.accessor("fill", {
+    header: "填报状态",
+    cell: ({ getValue }) => <StatusPill tone={getValue() === "完整" ? "ok" : "warn"}>{getValue()}</StatusPill>,
+  }),
+]);
+
 export default function SchemaPage() {
   const toast = useToast();
   const [tableId, setTableId] = useState("staff");
   const [open, setOpen] = useState(false);
-  const [extra, setExtra] = useState<{ cn: string; code: string; type: string; required: boolean; source: string; fill: string }[]>([]);
-  const table = DATA_TABLES.find((item) => item.id === tableId) ?? DATA_TABLES[1];
-  const fields = [...(SCHEMA_FIELDS[table.id] ?? table.sections.flatMap((section) => section.fields).map((field) => ({
-    cn: field.label,
-    code: field.key,
-    type: field.type === "number" ? "INT" : field.type === "date" ? "DATE" : field.type === "textarea" ? "TEXT" : "VARCHAR(64)",
-    required: Boolean(field.required),
-    source: "手动填报",
-    fill: "完整",
-  }))), ...extra];
+  const [extra, setExtra] = useState<SchemaField[]>([]);
+  const dataset = DATA_TABLES.find((item) => item.id === tableId) ?? DATA_TABLES[1];
+  const fields = useMemo<SchemaField[]>(
+    () => [
+      ...(SCHEMA_FIELDS[dataset.id] ??
+        dataset.sections.flatMap((section) => section.fields).map((field) => ({
+          cn: field.label,
+          code: field.key,
+          type: field.type === "number" ? "INT" : field.type === "date" ? "DATE" : field.type === "textarea" ? "TEXT" : "VARCHAR(64)",
+          required: Boolean(field.required),
+          source: "手动填报",
+          fill: "完整",
+        }))),
+      ...extra,
+    ],
+    [dataset, extra],
+  );
+  const fieldTable = useAppTable({
+    data: fields,
+    columns: schemaColumns,
+    initialState: { pagination: allRowsPagination },
+  });
 
   return (
     <div className="mx-auto max-w-400 p-5 xl:p-6">
@@ -51,7 +79,7 @@ export default function SchemaPage() {
           <ul className="max-h-160 overflow-y-auto">
             {DATA_TABLES.map((item) => (
               <li key={item.id}>
-                <button type="button" onClick={() => { setTableId(item.id); setExtra([]); }} className={`w-full px-4 py-3 text-left ${item.id === table.id ? "bg-zinc-100" : "hover:bg-zinc-50"}`}>
+                <button type="button" onClick={() => { setTableId(item.id); setExtra([]); }} className={`w-full px-4 py-3 text-left ${item.id === dataset.id ? "bg-zinc-100" : "hover:bg-zinc-50"}`}>
                   <p className="text-[12px] font-medium">{item.name}</p>
                   <p className="mt-0.5 text-[10px] text-zinc-400">{item.code} · {item.dept}</p>
                 </button>
@@ -59,30 +87,14 @@ export default function SchemaPage() {
             ))}
           </ul>
         </Panel>
-        <Panel title={table.name} description={`${table.code} · ${table.dept} · ${table.collected} 条`}>
-          <div className="overflow-x-auto">
-            <table className="w-full min-w-170 text-left text-[12px]">
-              <thead className="bg-zinc-50 text-[11px] text-zinc-500">
-                <tr>
-                  {["字段名称", "字段编码", "数据类型", "必填", "来源渠道", "填报状态"].map((head) => (
-                    <th key={head} className="px-4 py-2.5 font-medium">{head}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {fields.map((field) => (
-                  <tr key={field.code} className="border-t border-zinc-100">
-                    <td className="px-4 py-2.5 font-medium">{field.cn}</td>
-                    <td className="px-4 py-2.5 font-mono text-[11px] text-zinc-500">{field.code}</td>
-                    <td className="px-4 py-2.5">{field.type}</td>
-                    <td className="px-4 py-2.5">{field.required ? "是" : "否"}</td>
-                    <td className="px-4 py-2.5">{field.source}</td>
-                    <td className="px-4 py-2.5"><StatusPill tone={field.fill === "完整" ? "ok" : "warn"}>{field.fill}</StatusPill></td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+        <Panel title={dataset.name} description={`${dataset.code} · ${dataset.dept} · ${dataset.collected} 条`}>
+          <DataTable
+            table={fieldTable}
+            empty="暂无字段"
+            className="min-w-170"
+            stickyHeader
+            containerClassName="max-h-[min(70vh,720px)] overflow-auto"
+          />
         </Panel>
       </div>
       {open ? (

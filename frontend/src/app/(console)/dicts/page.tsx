@@ -3,6 +3,7 @@
 import { BookOpen, Info, Plus, Search, Trash2, X } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 
+import { allRowsPagination, createAppColumnHelper, DataTable, useAppTable } from "@/components/data-table";
 import { FormCombobox } from "@/components/form-combobox";
 import { useToast } from "@/components/toast";
 import { ApiError, api, loginRequest } from "@/lib/api";
@@ -26,6 +27,8 @@ type DictItem = {
 };
 
 type DictDetail = DictType & { items: DictItem[] };
+
+const itemHelper = createAppColumnHelper<DictItem>();
 
 const fieldClass = "w-full rounded-md border border-zinc-200 px-2.5 py-2 text-[12px] outline-none focus:border-zinc-400";
 
@@ -114,6 +117,79 @@ export default function DictsPage() {
     const needle = keyword.trim().toLowerCase();
     return items.filter((item) => !needle || `${item.value ?? ""}${item.label}`.toLowerCase().includes(needle));
   }, [items, keyword]);
+
+  const itemColumns = useMemo(
+    () =>
+      itemHelper.columns([
+        itemHelper.accessor("value", {
+          header: "字典编码",
+          cell: ({ getValue }) => getValue() || "—",
+          meta: { cellClassName: "font-mono text-[11px] text-zinc-500" },
+        }),
+        itemHelper.accessor("label", { header: "字典名称", meta: { cellClassName: "font-medium text-zinc-900" } }),
+        itemHelper.accessor("sort_order", { header: "排序", meta: { cellClassName: "text-zinc-500" } }),
+        itemHelper.accessor("is_active", {
+          header: "状态",
+          cell: ({ getValue }) =>
+            getValue() ? (
+              <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-medium text-emerald-700">
+                <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+                启用
+              </span>
+            ) : (
+              <span className="inline-flex items-center gap-1 rounded-full bg-zinc-100 px-2 py-0.5 text-[10px] font-medium text-zinc-500">
+                <span className="h-1.5 w-1.5 rounded-full bg-zinc-400" />
+                停用
+              </span>
+            ),
+        }),
+        itemHelper.accessor("remark", {
+          header: "备注",
+          cell: ({ getValue }) => getValue() || "—",
+          meta: { cellClassName: "text-[11px] text-zinc-500" },
+        }),
+        itemHelper.display({
+          id: "actions",
+          header: "操作",
+          meta: { headClassName: "text-right", cellClassName: "text-right" },
+          cell: ({ row }) => (
+            <div className="flex items-center justify-end gap-1">
+              <button
+                type="button"
+                className="rounded px-1.5 py-1 text-[11px] text-zinc-600 transition hover:bg-zinc-100"
+                onClick={() => {
+                  setFormError("");
+                  setEditing(row.original);
+                }}
+              >
+                编辑
+              </button>
+              <button
+                type="button"
+                className={`rounded px-1.5 py-1 text-[11px] ${row.original.is_active ? "text-amber-600 hover:bg-amber-50" : "text-emerald-600 hover:bg-emerald-50"}`}
+                onClick={() => void toggleItem(row.original)}
+              >
+                {row.original.is_active ? "停用" : "启用"}
+              </button>
+              <button
+                type="button"
+                className="rounded px-1.5 py-1 text-[11px] text-rose-600 transition hover:bg-rose-50"
+                onClick={() => setPendingDelete(row.original)}
+              >
+                删除
+              </button>
+            </div>
+          ),
+        }),
+      ]),
+    [],
+  );
+
+  const itemTable = useAppTable({
+    data: visibleItems,
+    columns: itemColumns,
+    initialState: { pagination: allRowsPagination },
+  });
 
   async function loadTypes(selectCode?: string) {
     const rows = await api<DictType[]>("/api/dicts");
@@ -350,40 +426,12 @@ export default function DictsPage() {
               </button>
             </div>
           </div>
-          <div className="min-h-0 flex-1 overflow-auto">
-            <table className="w-full border-collapse text-left">
-              <thead className="sticky top-0 z-10">
-                <tr className="border-b border-zinc-100 bg-zinc-50 text-[11px] text-zinc-500">
-                  {["字典编码", "字典名称", "排序", "状态", "备注"].map((head) => <th key={head} className="px-4 py-2.5 font-medium">{head}</th>)}
-                  <th className="px-4 py-2.5 text-right font-medium">操作</th>
-                </tr>
-              </thead>
-              <tbody className="text-[12px] text-zinc-700">
-                {visibleItems.length ? visibleItems.map((item) => (
-                  <tr key={item.id} className="border-b border-zinc-50 last:border-0 hover:bg-zinc-50/60">
-                    <td className="px-4 py-2.5 font-mono text-[11px] text-zinc-500">{item.value || "—"}</td>
-                    <td className="px-4 py-2.5 font-medium text-zinc-900">{item.label}</td>
-                    <td className="px-4 py-2.5 text-zinc-500">{item.sort_order}</td>
-                    <td className="px-4 py-2.5">
-                      {item.is_active ? (
-                        <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-medium text-emerald-700"><span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />启用</span>
-                      ) : (
-                        <span className="inline-flex items-center gap-1 rounded-full bg-zinc-100 px-2 py-0.5 text-[10px] font-medium text-zinc-500"><span className="h-1.5 w-1.5 rounded-full bg-zinc-400" />停用</span>
-                      )}
-                    </td>
-                    <td className="px-4 py-2.5 text-[11px] text-zinc-500">{item.remark || "—"}</td>
-                    <td className="px-4 py-2.5">
-                      <div className="flex items-center justify-end gap-1">
-                        <button type="button" className="rounded px-1.5 py-1 text-[11px] text-zinc-600 transition hover:bg-zinc-100" onClick={() => { setFormError(""); setEditing(item); }}>编辑</button>
-                        <button type="button" className={`rounded px-1.5 py-1 text-[11px] ${item.is_active ? "text-amber-600 hover:bg-amber-50" : "text-emerald-600 hover:bg-emerald-50"}`} onClick={() => void toggleItem(item)}>{item.is_active ? "停用" : "启用"}</button>
-                        <button type="button" className="rounded px-1.5 py-1 text-[11px] text-rose-600 transition hover:bg-rose-50" onClick={() => setPendingDelete(item)}>删除</button>
-                      </div>
-                    </td>
-                  </tr>
-                )) : <tr><td colSpan={6} className="px-4 py-10 text-center text-[12px] text-zinc-400">该分类暂无字典项</td></tr>}
-              </tbody>
-            </table>
-          </div>
+          <DataTable
+            table={itemTable}
+            empty="该分类暂无字典项"
+            stickyHeader
+            containerClassName="min-h-0 flex-1 overflow-auto"
+          />
           <div className="flex shrink-0 flex-wrap items-center justify-between gap-2 border-t border-zinc-100 px-4 py-3">
             <p className="text-[11px] text-zinc-400">{category?.name ?? "字典"} · 共 {items.length} 项，当前显示 {visibleItems.length} 项</p>
             <div className="flex items-center gap-3 text-[10px] text-zinc-400">

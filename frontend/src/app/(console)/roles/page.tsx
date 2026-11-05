@@ -4,6 +4,7 @@ import { Plus, Search, ShieldAlert, X } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 
 import { ApiConnect } from "@/components/api-connect";
+import { allRowsPagination, createAppColumnHelper, DataTable, useAppTable } from "@/components/data-table";
 import { FormCombobox } from "@/components/form-combobox";
 import { useToast } from "@/components/toast";
 import { ApiError, api } from "@/lib/api";
@@ -37,6 +38,11 @@ const scopeOptions: Array<{ value: DataScope; label: string }> = [
   { value: "department", label: "本部门" },
   { value: "all", label: "全校" },
 ];
+
+type MatrixRow = { module: string; items: Permission[]; scope: boolean };
+
+const roleHelper = createAppColumnHelper<RoleRow>();
+const matrixHelper = createAppColumnHelper<MatrixRow>();
 
 function messageOf(error: unknown) {
   return error instanceof ApiError ? error.message : "请求失败";
@@ -120,6 +126,130 @@ export default function RolesPage() {
   }, [permissions]);
 
   const builtinRoles = roles.filter((role) => role.is_builtin);
+
+  const roleColumns = useMemo(
+    () =>
+      roleHelper.columns([
+        roleHelper.accessor("name", {
+          header: "角色名称",
+          cell: ({ row }) => (
+            <div className="flex items-center gap-2">
+              <span className="font-medium text-zinc-900">{row.original.name}</span>
+              {row.original.is_builtin ? (
+                <span className="rounded border border-zinc-200 px-1.5 py-0.5 text-[9px] text-zinc-500">内置</span>
+              ) : null}
+            </div>
+          ),
+        }),
+        roleHelper.accessor("code", { header: "角色编码", meta: { cellClassName: "font-mono text-[11px] text-zinc-500" } }),
+        roleHelper.accessor("data_scope", {
+          header: "数据范围",
+          cell: ({ getValue }) => (
+            <span className={`rounded px-1.5 py-0.5 text-[10px] font-medium ${scopeBadge(getValue())}`}>
+              {scopeLabel(getValue())}
+            </span>
+          ),
+        }),
+        roleHelper.accessor("user_count", {
+          header: "关联用户数",
+          cell: ({ getValue }) => `${getValue()} 人`,
+          meta: { cellClassName: "text-zinc-600" },
+        }),
+        roleHelper.display({
+          id: "permission_count",
+          header: "权限数",
+          cell: ({ row }) => row.original.permission_codes.length,
+          meta: { cellClassName: "text-zinc-600" },
+        }),
+        roleHelper.accessor("updated_at", {
+          header: "更新时间",
+          cell: ({ getValue }) => formatTime(getValue()),
+          meta: { cellClassName: "text-[11px] text-zinc-500" },
+        }),
+        roleHelper.display({
+          id: "actions",
+          header: "操作",
+          meta: { headClassName: "text-right", cellClassName: "text-right" },
+          cell: ({ row }) => (
+            <div className="flex items-center justify-end gap-1">
+              <button
+                type="button"
+                className="rounded px-1.5 py-1 text-[11px] text-zinc-600 hover:bg-zinc-100"
+                onClick={() => {
+                  setFormError("");
+                  setEditing(row.original);
+                }}
+              >
+                编辑
+              </button>
+              <button
+                type="button"
+                className="rounded px-1.5 py-1 text-[11px] text-blue-600 hover:bg-blue-50"
+                onClick={() => openPerm(row.original)}
+              >
+                配置权限
+              </button>
+              <button
+                type="button"
+                className={`rounded px-1.5 py-1 text-[11px] ${row.original.is_builtin ? "text-zinc-400" : "text-rose-600 hover:bg-rose-50"}`}
+                onClick={() => void tryDelete(row.original)}
+              >
+                删除
+              </button>
+            </div>
+          ),
+        }),
+      ]),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [],
+  );
+
+  const rolesTable = useAppTable({
+    data: visible,
+    columns: roleColumns,
+    initialState: { pagination: allRowsPagination },
+  });
+
+  const matrixRows = useMemo<MatrixRow[]>(
+    () => [
+      { module: "数据范围", items: [], scope: true },
+      ...modules.map(([module, items]) => ({ module, items, scope: false })),
+    ],
+    [modules],
+  );
+
+  const matrixColumns = useMemo(
+    () =>
+      matrixHelper.columns([
+        matrixHelper.accessor("module", { header: "能力项", meta: { cellClassName: "font-medium text-zinc-800" } }),
+        ...builtinRoles.map((role) =>
+          matrixHelper.display({
+            id: `role-${role.id}`,
+            header: role.name,
+            cell: ({ row }) =>
+              row.original.scope ? (
+                <span className={`rounded px-1.5 py-0.5 text-[10px] ${scopeBadge(role.data_scope)}`}>
+                  {scopeLabel(role.data_scope)}
+                </span>
+              ) : (
+                (() => {
+                  const names = row.original.items
+                    .filter((item) => role.permission_codes.includes(item.code))
+                    .map((item) => item.name);
+                  return names.length ? names.join("、") : <span className="text-zinc-400">—</span>;
+                })()
+              ),
+          }),
+        ),
+      ]),
+    [builtinRoles],
+  );
+
+  const matrixTable = useAppTable({
+    data: matrixRows,
+    columns: matrixColumns,
+    initialState: { pagination: allRowsPagination },
+  });
 
   async function reload() {
     setRoles(await api<RoleRow[]>("/api/roles"));
@@ -234,35 +364,7 @@ export default function RolesPage() {
             <input className="w-44 border-0 bg-transparent p-0 text-[12px] outline-none placeholder:text-zinc-400" placeholder="搜索角色名称 / 编码" value={keyword} onChange={(event) => setKeyword(event.target.value)} />
           </div>
         </div>
-        <div className="overflow-x-auto">
-          <table className="w-full min-w-225 border-collapse text-left">
-            <thead>
-              <tr className="border-b border-zinc-100 bg-zinc-50/60 text-[11px] text-zinc-500">
-                {["角色名称", "角色编码", "数据范围", "关联用户数", "权限数", "更新时间"].map((head) => <th key={head} className="px-4 py-2.5 font-medium">{head}</th>)}
-                <th className="px-4 py-2.5 text-right font-medium">操作</th>
-              </tr>
-            </thead>
-            <tbody className="text-[12px] text-zinc-700">
-              {visible.length ? visible.map((role) => (
-                <tr key={role.id} className="border-b border-zinc-50 last:border-0 hover:bg-zinc-50/60">
-                  <td className="px-4 py-3"><div className="flex items-center gap-2"><span className="font-medium text-zinc-900">{role.name}</span>{role.is_builtin ? <span className="rounded border border-zinc-200 px-1.5 py-0.5 text-[9px] text-zinc-500">内置</span> : null}</div></td>
-                  <td className="px-4 py-3 font-mono text-[11px] text-zinc-500">{role.code}</td>
-                  <td className="px-4 py-3"><span className={`rounded px-1.5 py-0.5 text-[10px] font-medium ${scopeBadge(role.data_scope)}`}>{scopeLabel(role.data_scope)}</span></td>
-                  <td className="px-4 py-3 text-zinc-600">{role.user_count} 人</td>
-                  <td className="px-4 py-3 text-zinc-600">{role.permission_codes.length}</td>
-                  <td className="px-4 py-3 text-[11px] text-zinc-500">{formatTime(role.updated_at)}</td>
-                  <td className="px-4 py-3">
-                    <div className="flex items-center justify-end gap-1">
-                      <button type="button" className="rounded px-1.5 py-1 text-[11px] text-zinc-600 hover:bg-zinc-100" onClick={() => { setFormError(""); setEditing(role); }}>编辑</button>
-                      <button type="button" className="rounded px-1.5 py-1 text-[11px] text-blue-600 hover:bg-blue-50" onClick={() => openPerm(role)}>配置权限</button>
-                      <button type="button" className={`rounded px-1.5 py-1 text-[11px] ${role.is_builtin ? "text-zinc-400" : "text-rose-600 hover:bg-rose-50"}`} onClick={() => void tryDelete(role)}>删除</button>
-                    </div>
-                  </td>
-                </tr>
-              )) : <tr><td colSpan={7} className="px-4 py-10 text-center text-[12px] text-zinc-400">未找到匹配的角色</td></tr>}
-            </tbody>
-          </table>
-        </div>
+        <DataTable table={rolesTable} empty="未找到匹配的角色" className="min-w-225" />
       </div>
 
       <div className="rounded-lg border border-zinc-200 bg-white">
@@ -270,33 +372,12 @@ export default function RolesPage() {
           <h2 className="text-[13px] font-semibold text-zinc-800">内置角色权限差异</h2>
           <p className="mt-1 text-[11px] text-zinc-400">按当前权限配置生成。信息中心管理员的权限由系统固定，不能在此修改。</p>
         </div>
-        <div className="overflow-x-auto">
-          <table className="w-full min-w-220 border-collapse text-left text-[12px]">
-            <thead>
-              <tr className="border-b border-zinc-100 bg-zinc-50/60 text-[11px] text-zinc-500">
-                <th className="px-4 py-2.5 font-medium">能力项</th>
-                {builtinRoles.map((role) => <th key={role.id} className="px-4 py-2.5 font-medium">{role.name}</th>)}
-              </tr>
-            </thead>
-            <tbody className="text-zinc-600">
-              <tr className="border-b border-zinc-50">
-                <td className="px-4 py-2.5 font-medium text-zinc-800">数据范围</td>
-                {builtinRoles.map((role) => (
-                  <td key={role.id} className="px-4 py-2.5"><span className={`rounded px-1.5 py-0.5 text-[10px] ${scopeBadge(role.data_scope)}`}>{scopeLabel(role.data_scope)}</span></td>
-                ))}
-              </tr>
-              {modules.map(([module, items], index) => (
-                <tr key={module} className={index % 2 ? "border-b border-zinc-50 bg-zinc-50/30" : "border-b border-zinc-50"}>
-                  <td className="px-4 py-2.5 font-medium text-zinc-800">{module}</td>
-                  {builtinRoles.map((role) => {
-                    const names = items.filter((item) => role.permission_codes.includes(item.code)).map((item) => item.name);
-                    return <td key={role.id} className="px-4 py-2.5">{names.length ? names.join("、") : <span className="text-zinc-400">—</span>}</td>;
-                  })}
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <DataTable
+          table={matrixTable}
+          empty="暂无内置角色"
+          className="min-w-220"
+          rowClassName={(row) => (row.index > 0 && row.index % 2 === 1 ? "bg-zinc-50/30" : "")}
+        />
       </div>
 
       {editing ? (

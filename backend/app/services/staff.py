@@ -10,8 +10,23 @@ from app.services.staff_rules import TITLE_RANKS, StaffWrite, normalize_staff
 
 DICT_CODES = (
     "D01",
+    "D02",
+    "D03",
+    "D04",
+    "D05",
+    "D06",
+    "D07",
+    "D08",
+    "D09",
+    "D11",
+    "D12",
+    "D13",
     "D14",
+    "D15",
+    "D16",
+    "D18",
     "D19",
+    "D20",
     "D21",
     "D22",
     "D23",
@@ -23,8 +38,41 @@ DICT_CODES = (
     "D30",
     "D31",
     "D32",
+    "D33",
+    "D34",
+    "D35",
+    "D36",
+    "D37",
+    "D38",
+    "D39",
+    "D40",
+    "D41",
+    "D42",
+    "D43",
+    "D44",
+    "D45",
+    "D46",
+    "D47",
+    "D48",
+    "D49",
+    "D50",
+    "D51",
+    "D52",
+    "D53",
+    "D54",
     "D55",
+    "D56",
+    "D57",
+    "D59",
+    "D61",
+    "D62",
     "D63",
+    "D64",
+    "D65",
+    "D66",
+    "D67",
+    "D68",
+    "D69",
 )
 
 
@@ -90,7 +138,9 @@ async def load_dict_options(
 
 async def active_department_names(session: AsyncSession) -> set[str]:
     names = await session.scalars(
-        select(Department.name).where(Department.is_active.is_(True)).order_by(Department.sort_order)
+        select(Department.name)
+        .where(Department.is_active.is_(True))
+        .order_by(Department.sort_order)
     )
     return set(names.all())
 

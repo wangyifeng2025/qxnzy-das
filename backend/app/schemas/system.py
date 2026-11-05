@@ -4,6 +4,7 @@ from pydantic import BaseModel, Field
 
 from app.models.system import DataScope, DepartmentKind, UserStatus
 from app.schemas.common import ORMModel
+from app.schemas.records import DatasetAccess
 
 # ---------- 部门 ----------
 
@@ -168,6 +169,7 @@ class UserRead(ORMModel):
 class CurrentUser(UserRead):
     permissions: list[str] = Field(default_factory=list)
     data_scope: str
+    datasets: list[DatasetAccess] = Field(default_factory=list)
 
 
 # ---------- 认证 ----------

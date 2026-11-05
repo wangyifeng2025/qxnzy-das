@@ -2,10 +2,22 @@
 
 import { useMemo, useState } from "react";
 
+import { allRowsPagination, createAppColumnHelper, DataTable, useAppTable } from "@/components/data-table";
 import { KpiCard, PageIntro, Panel, StatusPill } from "@/components/page-bits";
 import { useToast } from "@/components/toast";
 
-const issues: string[][] = [];
+type Issue = {
+  level: string;
+  target: string;
+  description: string;
+  affected: string;
+  occurred_at: string;
+  status: string;
+};
+
+const issues: Issue[] = [];
+
+const issueHelper = createAppColumnHelper<Issue>();
 
 const logs: string[][] = [];
 
@@ -13,6 +25,38 @@ export default function QualityPage() {
   const toast = useToast();
   const [level, setLevel] = useState("全部级别");
   const visible = useMemo(() => logs.filter((row) => level === "全部级别" || row[1] === level), [level]);
+  const issueColumns = useMemo(
+    () =>
+      issueHelper.columns([
+        issueHelper.accessor("level", {
+          header: "级别",
+          cell: ({ getValue }) => (
+            <StatusPill tone={getValue() === "严重" ? "bad" : getValue() === "警告" ? "warn" : "muted"}>{getValue()}</StatusPill>
+          ),
+        }),
+        issueHelper.accessor("target", { header: "数据表 / 字段", meta: { cellClassName: "font-medium" } }),
+        issueHelper.accessor("description", { header: "异常说明", meta: { cellClassName: "whitespace-normal" } }),
+        issueHelper.accessor("affected", { header: "影响记录" }),
+        issueHelper.accessor("occurred_at", { header: "最近发生", meta: { cellClassName: "text-zinc-500" } }),
+        issueHelper.accessor("status", { header: "状态" }),
+        issueHelper.display({
+          id: "actions",
+          header: "操作",
+          meta: { headClassName: "text-right", cellClassName: "text-right" },
+          cell: ({ row }) => (
+            <button type="button" className="text-[11px] font-medium" onClick={() => toast(`已记录处置：${row.original.target}`)}>
+              处理
+            </button>
+          ),
+        }),
+      ]),
+    [toast],
+  );
+  const issueTable = useAppTable({
+    data: issues,
+    columns: issueColumns,
+    initialState: { pagination: allRowsPagination },
+  });
 
   return (
     <div className="mx-auto max-w-400 p-5 xl:p-6">
@@ -49,32 +93,7 @@ export default function QualityPage() {
         </Panel>
       </div>
       <Panel className="mt-4" title="异常与校验失败明细">
-        <div className="overflow-x-auto">
-          <table className="w-full min-w-190 text-left text-[12px]">
-            <thead className="bg-zinc-50 text-[11px] text-zinc-500">
-              <tr>
-                {["级别", "数据表 / 字段", "异常说明", "影响记录", "最近发生", "状态", "操作"].map((head) => (
-                  <th key={head} className="px-4 py-2.5 font-medium">{head}</th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {issues.map((row) => (
-                <tr key={row[1]} className="border-t border-zinc-100">
-                  <td className="px-4 py-2.5"><StatusPill tone={row[0] === "严重" ? "bad" : row[0] === "警告" ? "warn" : "muted"}>{row[0]}</StatusPill></td>
-                  <td className="px-4 py-2.5 font-medium">{row[1]}</td>
-                  <td className="px-4 py-2.5">{row[2]}</td>
-                  <td className="px-4 py-2.5">{row[3]}</td>
-                  <td className="px-4 py-2.5 text-zinc-500">{row[4]}</td>
-                  <td className="px-4 py-2.5">{row[5]}</td>
-                  <td className="px-4 py-2.5">
-                    <button type="button" className="text-[11px] font-medium" onClick={() => toast(`已记录处置：${row[1]}`)}>处理</button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <DataTable table={issueTable} empty="暂无异常与校验失败记录" className="min-w-190" />
       </Panel>
       <Panel className="mt-4" title="采集日志" action={
         <select className="h-8 rounded-md border border-zinc-200 px-2 text-[12px]" value={level} onChange={(event) => setLevel(event.target.value)}>

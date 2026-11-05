@@ -129,9 +129,7 @@ async def update_department(
 
 
 @router.delete("/{department_id}", response_model=Message, summary="删除系部")
-async def delete_department(
-    department_id: int, session: DbSession, operator: WriteDept
-) -> Message:
+async def delete_department(department_id: int, session: DbSession, operator: WriteDept) -> Message:
     dept = await _load(session, department_id)
     counts = await department_user_counts(session)
     if counts.get(dept.id, 0):

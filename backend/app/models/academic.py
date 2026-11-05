@@ -36,6 +36,10 @@ class Major(Base):
             '"SFZDZY" <> \'1\' OR ("ZDZYJBM" IS NOT NULL AND "ZDZYLXM" IS NOT NULL)',
             name="ck_ODS_ZYSZSJ_ZDZY_required",
         ),
+        CheckConstraint(
+            '"ZYCCM" <> \'1\' OR "SYXWLBM" IS NOT NULL',
+            name="ck_ODS_ZYSZSJ_SYXWLBM_required",
+        ),
     )
 
     ZYMC: Mapped[str] = mapped_column(String(60), comment="专业名称")
@@ -47,7 +51,7 @@ class Major(Base):
     PZSZNY: Mapped[str] = mapped_column(String(7), comment="批准设置日期")
     SCZSNY: Mapped[str] = mapped_column(String(7), comment="首次招生日期")
     ZYSSYXBMC: Mapped[str] = mapped_column(String(60), comment="专业所属院系部")
-    SYXWLBM: Mapped[str] = mapped_column(String(20), comment="学位授予门类")
+    SYXWLBM: Mapped[str | None] = mapped_column(String(20), comment="学位授予门类")
     SFZDZY: Mapped[str] = mapped_column(String(1), comment="是否重点专业")
     ZDZYJBM: Mapped[str | None] = mapped_column(String(10), comment="重点专业级别")
     ZDZYLXM: Mapped[str | None] = mapped_column(String(100), comment="重点专业类型")

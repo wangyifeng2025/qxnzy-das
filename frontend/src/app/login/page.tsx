@@ -20,6 +20,8 @@ import {
 const quickAccounts: { role: Role; account: string; password: string; title: string; hint: string; badge: string; tone: string }[] = [
   { role: "teacher", account: "2024020008", password: "123456", title: "教师", hint: "谭元霸 · 工号 2024020008 · 密码 123456", badge: "本人数据", tone: "bg-emerald-50 text-emerald-700" },
   { role: "staff", account: "2015200012", password: "123456", title: "系部数据管理员", hint: "罗胜 · 工号 2015200012 · 密码 123456", badge: "本部门", tone: "bg-sky-50 text-sky-700" },
+  { role: "staff", account: "zzrsb01", password: "123456", title: "组织人事部审核员", hint: "zzrsb01 · 组织人事部 · 密码 123456", badge: "业务部门", tone: "bg-amber-50 text-amber-700" },
+  { role: "staff", account: "jwc01", password: "123456", title: "教务处审核员", hint: "jwc01 · 教务处 · 密码 123456", badge: "教务处", tone: "bg-teal-50 text-teal-700" },
   { role: "admin", account: "2004020159", password: "123456", title: "信息中心管理员", hint: "王一锋 · 工号 2004020159 · 密码 123456", badge: "全校", tone: "bg-violet-50 text-violet-700" },
 ];
 
@@ -32,20 +34,25 @@ function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [pending, setPending] = useState(false);
+  // 首屏（服务端与客户端首次渲染）统一渲染占位，避免读到 localStorage 前后结构不一致。
+  const [phase, setPhase] = useState<"checking" | "form">("checking");
 
   useEffect(() => {
-    const session = readSession();
-    if (session) {
-      router.replace(ROLE_HOME[session.role]);
-      return;
-    }
-    const remembered = readRememberedAccount();
-    if (remembered) {
-      queueMicrotask(() => {
-        setAccount(remembered);
-        setRemember(true);
-      });
-    }
+    let cancelled = false;
+    // 放到微任务里，避免服务端/客户端首次渲染结构不一致，也避免同步 setState 造成级联渲染。
+    queueMicrotask(() => {
+      if (cancelled) return;
+      const session = readSession();
+      if (session) {
+        router.replace(ROLE_HOME[session.role]);
+        return;
+      }
+      setAccount(readRememberedAccount());
+      setPhase("form");
+    });
+    return () => {
+      cancelled = true;
+    };
   }, [router]);
 
   async function enterWithApi(nextAccount: string, nextPassword: string) {
@@ -74,6 +81,17 @@ function LoginForm() {
     } finally {
       setPending(false);
     }
+  }
+
+  if (phase === "checking") {
+    return (
+      <div className="flex h-screen w-full items-center justify-center bg-[#f7f7f8] text-zinc-400">
+        <p className="flex items-center gap-2 text-[12px]">
+          <span className="size-3.5 animate-spin rounded-full border-2 border-zinc-300 border-t-zinc-600" aria-hidden="true" />
+          正在确认登录状态
+        </p>
+      </div>
+    );
   }
 
   return (
@@ -228,7 +246,7 @@ function LoginForm() {
                 const Icon = item.role === "teacher" ? UserRound : item.role === "staff" ? Building2 : ShieldCheck;
                 return (
                   <button
-                    key={item.role}
+                    key={item.account}
                     type="button"
                     disabled={pending}
                     className="group flex w-full items-center gap-3 rounded-lg border border-zinc-200 bg-white px-3.5 py-3 text-left transition hover:border-zinc-300 hover:bg-zinc-50 disabled:opacity-60"
