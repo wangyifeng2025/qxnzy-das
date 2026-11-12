@@ -13,6 +13,7 @@ from app.api.routes.auth import router as auth_router
 from app.api.routes.departments import router as departments_router
 from app.api.routes.dicts import router as dicts_router
 from app.api.routes.health import router as health_router
+from app.api.routes.ingest_chat import router as ingest_chat_router
 from app.api.routes.ingestion import router as ingestion_router
 from app.api.routes.records import router as records_router
 from app.api.routes.roles import router as roles_router
@@ -92,4 +93,5 @@ app.include_router(departments_router)
 app.include_router(dicts_router)
 app.include_router(records_router)
 app.include_router(ingestion_router)
+app.include_router(ingest_chat_router)
 app.include_router(audit_router)

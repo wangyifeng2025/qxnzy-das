@@ -17,7 +17,8 @@ Transform = Literal[
 ]
 RowMode = Literal["single", "grouped", "repeat"]
 HeaderPattern = Literal["normal", "columnar"]
-PlanSource = Literal["template", "exact", "llm", "user", "text"]
+# supplement：系统生成的补充模板回传，按隐藏页信息读取
+PlanSource = Literal["template", "exact", "llm", "user", "text", "supplement"]
 
 
 class ColumnMap(BaseModel):

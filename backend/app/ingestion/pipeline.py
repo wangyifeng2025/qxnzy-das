@@ -6,6 +6,7 @@ import unicodedata
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from pathlib import Path
+from typing import cast
 
 from fastapi import HTTPException
 from sqlalchemy import delete, func, select
@@ -24,7 +25,7 @@ from app.core.config import resolved_ai, settings
 from app.datasets.access import filler_type_for
 from app.datasets.registry import get_dataset
 from app.datasets.spec import DatasetSpec, jsonable
-from app.ingestion import dedupe, triage
+from app.ingestion import dedupe, rounds, supplement, triage
 from app.ingestion.chunking import chunk_blocks
 from app.ingestion.dedupe import KeyIndex
 from app.ingestion.enrich import LookupCache, enrich
@@ -40,7 +41,7 @@ from app.ingestion.parsers.spreadsheet import (
     parse_xls,
     parse_xlsx,
 )
-from app.ingestion.plan import StructurePlan
+from app.ingestion.plan import SheetPlan, StructurePlan, mapped_fields
 from app.ingestion.planning import (
     PlanInvalid,
     auto_execute,
@@ -49,7 +50,7 @@ from app.ingestion.planning import (
     plan_with_model,
     validate_plan,
 )
-from app.ingestion.profile import profile_document
+from app.ingestion.profile import DocumentProfile, profile_document
 from app.ingestion.storage import read_upload
 from app.ingestion.templates import find_template, load_aliases, use_template
 from app.models.ingestion import IngestBatch, IngestCandidate, IngestFile, IngestTask
@@ -183,6 +184,7 @@ async def _execute(session: AsyncSession, task: IngestTask, client: LLMClient | 
             IngestCandidate.task_id == task.id, IngestCandidate.record_id.is_(None)
         )
     )
+    before = await rounds.snapshot(session, task.batch_id) if task.batch_id else {}
     task.status = "extracting"
     await _checkpoint(session, task, 30)
     user = await session.get(User, task.created_by)
@@ -206,6 +208,34 @@ async def _execute(session: AsyncSession, task: IngestTask, client: LLMClient | 
     seq = 0
     plan: StructurePlan | None = None
     usable = [sheet for sheet in profile.sheets if not sheet.skip_reason]
+    if task.mode != "initial" and usable and task.batch_id:
+        handled = await _supplement(
+            session,
+            task,
+            specs[task.dataset_code],
+            document,
+            profile,
+            user,
+            lookups,
+            option_sets,
+            names,
+            caller,
+            guides,
+            index,
+            cache,
+        )
+        if handled:
+            if task.status != "awaiting_plan":
+                task.prompt_version = task.plan_source
+                task.status = "pending_confirmation"
+                task.progress = 100
+                task.finished_at = _now()
+            await _round(session, task, before, stored.original_name)
+            if task.status == "awaiting_plan":
+                await _checkpoint(session, task, 55)
+            return
+    if task.mode != "initial":
+        task.mode = "initial"
     if usable:
         plan = await _resolve_plan(session, task, specs, profile, guides, caller)
         task.plan = plan.model_dump(mode="json")
@@ -214,6 +244,7 @@ async def _execute(session: AsyncSession, task: IngestTask, client: LLMClient | 
         task.dry_run = dry.model_dump(mode="json")
         if not auto_execute(plan, dry) and not task.mapping_applied:
             task.status = "awaiting_plan"
+            await _round(session, task, before, stored.original_name)
             await _checkpoint(session, task, 55)
             logger.info("ingest task=%s awaiting plan source=%s", task.id, plan.source)
             return
@@ -264,6 +295,7 @@ async def _execute(session: AsyncSession, task: IngestTask, client: LLMClient | 
     task.status = "pending_confirmation"
     task.progress = 100
     task.finished_at = _now()
+    await _round(session, task, before, stored.original_name)
     logger.info(
         "ingest task=%s candidates=%s calls=%s plan=%s",
         task.id,
@@ -271,6 +303,268 @@ async def _execute(session: AsyncSession, task: IngestTask, client: LLMClient | 
         task.llm_calls,
         plan.source if plan else "text",
     )
+
+
+async def _round(
+    session: AsyncSession, task: IngestTask, before: rounds.Snapshot, file_name: str
+) -> None:
+    """轮次报告写失败不影响解析结果，只记日志。"""
+    if not task.batch_id:
+        return
+    extra: dict[str, object] = {
+        "file_name": file_name,
+        "mode": task.mode,
+        "plan_source": task.plan_source,
+        "status": task.status,
+    }
+    dry = task.dry_run or {}
+    if isinstance(dry.get("supplement"), dict):
+        extra["supplement"] = dry["supplement"]
+    try:
+        await rounds.record(
+            session,
+            task.batch_id,
+            trigger="file",
+            before=before,
+            user_id=task.created_by,
+            dataset_code=task.dataset_code,
+            task_id=task.id,
+            extra=extra,
+        )
+    except Exception:
+        logger.exception("ingest round task=%s", task.id)
+
+
+async def _supplement(
+    session: AsyncSession,
+    task: IngestTask,
+    spec: DatasetSpec,
+    document: ParsedDocument,
+    profile: DocumentProfile,
+    user: User,
+    lookups: dict[str, dict[str, str]],
+    option_sets: dict[str, set[str]],
+    names: set[str],
+    caller: Caller | None,
+    guides: dict[str, str],
+    index: KeyIndex,
+    cache: LookupCache,
+) -> bool:
+    """补齐模式。返回 False 表示这份文件应按首轮处理（批次里还没有该表候选，或文件本身已完整）。"""
+    if task.batch_id is None:
+        return False
+    rows = [
+        row
+        for row in await rounds.pending_rows(session, task.batch_id)
+        if row.dataset_code == spec.code
+    ]
+    if not rows:
+        return False
+    marker = supplement.read_marker(document)
+    if marker is not None and (
+        marker.batch_id != task.batch_id or marker.dataset_code != spec.code
+    ):
+        marker = None
+    aliases = await load_aliases(session, {spec.code}, task.department_id)
+    extra = aliases.get(spec.code, {})
+    user_plan = bool(task.mode == "supplement" and task.mapping_applied and task.plan)
+    if marker is None and not user_plan and exact_for({spec.code: spec}, profile, aliases):
+        return False
+    task.mode = "supplement"
+    candidates = {row.id: dict(row.values or {}) for row in rows}
+    preferred = tuple(task.match_key) if task.match_key else None
+    options = supplement.key_options(spec, preferred, marker.key if marker else None)
+    sheet_plan: SheetPlan | None = None
+    source = "exact"
+    confidence = 1.0
+    if user_plan:
+        stored = StructurePlan.model_validate(task.plan)
+        sheet_plan = next(
+            (
+                item
+                for item in stored.sheets
+                if item.role == "main" and item.dataset_code == spec.code
+            ),
+            None,
+        )
+        source = "user"
+    if sheet_plan is None and task.fresh_plan and marker is None and caller is not None:
+        modeled = await _supplement_model_plan(task, spec, profile, guides, caller)
+        if modeled is not None:
+            sheet_plan, confidence = modeled
+            source = "llm"
+    if sheet_plan is None:
+        sheet_plan = supplement.partial_plan(spec, profile, extra)
+        source = "supplement" if marker else "exact"
+    key = (
+        supplement.choose_key(mapped_fields(sheet_plan), candidates, options)
+        if sheet_plan is not None
+        else None
+    )
+    if key is None and marker is None and not user_plan and source != "llm" and caller is not None:
+        modeled = await _supplement_model_plan(task, spec, profile, guides, caller)
+        if modeled is not None:
+            found = supplement.choose_key(mapped_fields(modeled[0]), candidates, options)
+            if found is not None:
+                sheet_plan, confidence, key = modeled[0], modeled[1], found
+                source = "llm"
+    if sheet_plan is None:
+        raise IngestFailure("supplement_unreadable", "补齐文件中没有能对应到标准字段的表头")
+    plan = StructurePlan(sheets=[sheet_plan], source=source, confidence=confidence)
+    task.plan = plan.model_dump(mode="json")
+    task.plan_source = source
+    dry = dry_run(document, plan, {spec.code: spec}).model_dump(mode="json")
+    if key is None:
+        tried = "、".join(
+            "+".join(spec.field_map()[code].label for code in option if code in spec.field_map())
+            for option in options
+        )
+        dry["supplement"] = {
+            "error": f"文件中没有能唯一对上已有记录的字段组合（可用：{tried}）",
+            "rows": 0,
+            "matched": 0,
+        }
+        task.dry_run = dry
+        if user_plan:
+            raise IngestFailure("supplement_key", str(dry["supplement"]["error"]))
+        task.status = "awaiting_plan"
+        return True
+    task.match_key = list(key)
+    fields = tuple(
+        code for code in mapped_fields(sheet_plan) if code not in key and code in spec.field_map()
+    )
+    execution = build_records(document, plan)
+    file_rows: list[tuple[dict[str, object], dict[str, object]]] = []
+    for record in execution.records:
+        if not record.raw:
+            continue
+        normalized = normalize_payload(spec, record.raw, lookups)
+        values = {code: normalized[code] for code, raw in record.raw.items() if cell_text(raw)}
+        file_rows.append((values, {"sheet": record.sheet, "row": record.row}))
+    outcome = supplement.match(spec, key, fields, file_rows, candidates)
+    dry["supplement"] = outcome.summary(spec)
+    task.dry_run = dry
+    auto = (
+        marker is not None
+        or bool(user_plan)
+        or (
+            outcome.matched > 0
+            and outcome.match_rate >= settings.supplement_min_match_rate
+            and outcome.conflict_rate <= settings.supplement_max_conflict_rate
+            and (source != "llm" or confidence >= 0.8)
+        )
+    )
+    if not auto:
+        task.status = "awaiting_plan"
+        logger.info(
+            "ingest task=%s supplement awaiting rate=%.2f conflicts=%s",
+            task.id,
+            outcome.match_rate,
+            outcome.conflict_rows,
+        )
+        return True
+    await _apply_fills(
+        session, task, spec, user, outcome, source, lookups, option_sets, names, index, cache
+    )
+    return True
+
+
+async def _supplement_model_plan(
+    task: IngestTask,
+    spec: DatasetSpec,
+    profile: DocumentProfile,
+    guides: dict[str, str],
+    caller: Caller,
+) -> tuple[SheetPlan, float] | None:
+    """表头对不上时让模型给出列映射；模型不可用或计划无效都按“需要确认”处理。"""
+    try:
+        plan = await plan_with_model(caller, {spec.code: spec}, profile, guides, task.user_prompt)
+        plan = validate_plan(plan, profile, {spec.code: spec})
+    except (OutputInvalid, PlanInvalid, ModelUnavailable, BudgetExceeded) as exc:
+        logger.info("supplement model plan task=%s failed: %s", task.id, exc)
+        return None
+    sheet = next((item for item in plan.sheets if item.role == "main"), None)
+    if sheet is None:
+        return None
+    return sheet, plan.confidence
+
+
+async def _apply_fills(
+    session: AsyncSession,
+    task: IngestTask,
+    spec: DatasetSpec,
+    user: User,
+    outcome: supplement.Outcome,
+    source: str,
+    lookups: dict[str, dict[str, str]],
+    option_sets: dict[str, set[str]],
+    names: set[str],
+    index: KeyIndex,
+    cache: LookupCache,
+) -> None:
+    if not outcome.fills:
+        return
+    locked = (
+        await session.scalars(
+            select(IngestCandidate)
+            .where(IngestCandidate.id.in_(list(outcome.fills)))
+            .with_for_update()
+        )
+    ).all()
+    score = 0.85 if source == "llm" else 0.95
+    for row in locked:
+        fill = outcome.fills[row.id]
+        values = dict(row.values or {})
+        sources = {
+            code: item for code, item in (row.field_sources or {}).items() if isinstance(item, dict)
+        }
+        raw_values = dict(row.raw_values or {})
+        for code, value in fill.updates.items():
+            # 加锁前可能已被其他文件或用户填上，只补仍为空的字段
+            if cell_text(values.get(code)):
+                continue
+            values[code] = value
+            raw_values[code] = value
+            sources[code] = {
+                "source": "file",
+                "score": score,
+                "ref": {"task": task.id, **fill.location},
+            }
+        verdict = await assess(
+            session,
+            task,
+            spec,
+            user,
+            values,
+            lookups,
+            option_sets,
+            names,
+            None,
+            index,
+            cache,
+            field_sources=sources,
+        )
+        conflicts = list(row.conflicts or [])
+        for conflict in fill.conflicts:
+            if conflict not in conflicts:
+                conflicts.append(conflict)
+        warnings = list(verdict.warnings)
+        if conflicts:
+            warnings = _unique(warnings, "同批次存在字段冲突")
+        row.raw_values = raw_values
+        row.values = verdict.values
+        row.field_sources = cast(dict[str, object], verdict.field_sources)
+        row.conflicts = conflicts
+        row.errors = verdict.errors
+        row.warnings = warnings
+        row.completeness = verdict.completeness
+        row.business_key = verdict.business_key
+        row.duplicate_of = verdict.duplicate_of
+        row.target_record_id = verdict.target_record_id
+        row.triage = (
+            triage.TRIAGE_REVIEW if conflicts and not verdict.duplicate_of else verdict.triage
+        )
+    await session.flush()
 
 
 def _caller(

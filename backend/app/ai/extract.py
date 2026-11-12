@@ -1,6 +1,7 @@
 """向模型要结构计划、文本记录或缺失字段补全，并统一走 Caller 的缓存与预算。"""
 
 from pathlib import Path
+from typing import Literal
 
 from pydantic import BaseModel, Field
 
@@ -12,8 +13,10 @@ PROMPT_DIR = Path(__file__).parent / "prompts"
 PLAN_VERSION = "structure_plan_v1"
 RECORD_VERSION = "record_extract_v2"
 COMPLETE_VERSION = "field_completion_v1"
+ACTION_VERSION = "action_parse_v1"
 
 __all__ = [
+    "ACTION_VERSION",
     "COMPLETE_VERSION",
     "PLAN_VERSION",
     "RECORD_VERSION",
@@ -22,8 +25,10 @@ __all__ = [
     "ExtractResult",
     "ExtractedRecord",
     "OutputInvalid",
+    "ProposedAction",
     "complete_fields",
     "extract_records",
+    "parse_action",
     "prompt_text",
 ]
 
@@ -42,6 +47,20 @@ class CompletionResult(BaseModel):
     values: dict[str, str | None] = Field(default_factory=dict)
     evidence: str = ""
     confidence: float = 0
+
+
+class ActionScope(BaseModel):
+    triage: Literal["missing", "review", "auto"] | None = None
+    where: dict[str, str] = Field(default_factory=dict)
+
+
+class ProposedAction(BaseModel):
+    action: Literal["bulk_set", "resolve_conflict", "skip_field", "none"] = "none"
+    dataset_code: str | None = None
+    field: str | None = None
+    value: str | None = None
+    scope: ActionScope = Field(default_factory=ActionScope)
+    reply: str = ""
 
 
 def prompt_text(name: str) -> str:
@@ -81,6 +100,18 @@ async def complete_fields(
         system=system,
         user=user,
         model=CompletionResult,
+        cache_seconds=0,
+    )
+
+
+async def parse_action(caller: Caller, context: str, text: str) -> ProposedAction:
+    """context 为批次字段与缺口说明；用户原话放在数据块之后，只作为待翻译内容。"""
+    return await caller.json(
+        call_type="action_parse",
+        prompt_version=ACTION_VERSION,
+        system=prompt_text(ACTION_VERSION),
+        user=f"<<<DATA>>>\n{context}\n<<<END>>>\n\n用户说：{text}",
+        model=ProposedAction,
         cache_seconds=0,
     )
 

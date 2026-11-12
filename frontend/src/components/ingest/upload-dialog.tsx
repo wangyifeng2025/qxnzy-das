@@ -140,7 +140,7 @@ export function UploadDialog({
           {canAppend ? (
             <label className="flex items-center gap-1.5 text-[12px] text-zinc-600">
               <input type="checkbox" checked={appendToBatch} onChange={(event) => onAppendChange(event.target.checked)} />
-              追加到当前批次，按业务主键合并补充数据
+              追加到当前批次：只含部分列的文件会先对齐已有记录再补空字段
             </label>
           ) : null}
         </div>

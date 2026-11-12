@@ -69,6 +69,8 @@ class DatasetSpec:
     relate: Relate | None = None
     lookups: tuple[Lookup, ...] = ()
     derives: tuple[Derive, ...] = ()
+    # 补齐文件没有完整业务主键时，依次尝试的备选匹配键
+    supplement_keys: tuple[tuple[str, ...], ...] = ()
 
     def field_map(self) -> dict[str, FieldSpec]:
         return {field.code: field for field in self.fields}

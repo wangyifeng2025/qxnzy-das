@@ -88,6 +88,9 @@ class IngestTask(Base):
     mapping_applied: Mapped[bool] = mapped_column(Boolean, default=False)
     # 不使用已记住的结构模板和精确匹配，交给模型重新识别
     fresh_plan: Mapped[bool] = mapped_column(Boolean, default=False, server_default="false")
+    # initial 新建候选；supplement 只给本批次已有候选补空字段
+    mode: Mapped[str] = mapped_column(String(20), default="initial", server_default="initial")
+    match_key: Mapped[list[str] | None] = mapped_column(JSONB)
     column_mapping: Mapped[dict[str, object] | None] = mapped_column(JSONB)
     profile: Mapped[dict[str, object] | None] = mapped_column(JSONB)
     plan: Mapped[dict[str, object] | None] = mapped_column(JSONB)
@@ -206,6 +209,49 @@ class IngestHeaderAlias(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
 
 
+class IngestRound(Base):
+    """批次里每处理完一份文件或执行一条动作，留一条轮次报告。"""
+
+    __tablename__ = "ingest_round"
+    __table_args__ = (Index("uq_ingest_round_seq", "batch_id", "seq", unique=True),)
+
+    id: Mapped[str] = mapped_column(String(32), primary_key=True, default=uuid_hex)
+    batch_id: Mapped[str] = mapped_column(
+        ForeignKey("ingest_batch.id", ondelete="CASCADE"), index=True
+    )
+    seq: Mapped[int] = mapped_column(Integer)
+    trigger: Mapped[str] = mapped_column(String(20))
+    task_id: Mapped[str | None] = mapped_column(ForeignKey("ingest_task.id", ondelete="SET NULL"))
+    action_id: Mapped[str | None] = mapped_column(String(32))
+    report: Mapped[dict[str, object]] = mapped_column(JSONB)
+    created_by: Mapped[int] = mapped_column(ForeignKey("sys_user.id"))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+
+
+class IngestAction(Base):
+    """用户一句话解析出的批量动作。先预览，用户确认后才改候选。"""
+
+    __tablename__ = "ingest_action"
+    __table_args__ = (
+        CheckConstraint(
+            "status IN ('proposed', 'applied', 'rejected', 'expired')",
+            name="ck_ingest_action_status",
+        ),
+    )
+
+    id: Mapped[str] = mapped_column(String(32), primary_key=True, default=uuid_hex)
+    batch_id: Mapped[str] = mapped_column(
+        ForeignKey("ingest_batch.id", ondelete="CASCADE"), index=True
+    )
+    message: Mapped[str] = mapped_column(String(500))
+    action: Mapped[dict[str, object]] = mapped_column(JSONB)
+    preview: Mapped[dict[str, object]] = mapped_column(JSONB, default=dict)
+    status: Mapped[str] = mapped_column(String(20), default="proposed")
+    created_by: Mapped[int] = mapped_column(ForeignKey("sys_user.id"))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    applied_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+
+
 class AiCallCache(Base):
     __tablename__ = "ai_call_cache"
 
@@ -226,10 +272,12 @@ __all__ = [
     "TASK_STATUSES",
     "TRIAGE_CODES",
     "AiCallCache",
+    "IngestAction",
     "IngestBatch",
     "IngestCandidate",
     "IngestFile",
     "IngestHeaderAlias",
     "IngestPlanTemplate",
+    "IngestRound",
     "IngestTask",
 ]

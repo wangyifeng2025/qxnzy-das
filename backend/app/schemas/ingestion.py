@@ -27,6 +27,8 @@ class IngestTaskRead(BaseModel):
     has_mapping: bool
     file_name: str | None
     candidate_count: int
+    mode: str = "initial"
+    match_key: list[str] | None = None
     created_at: datetime
     finished_at: datetime | None
 
@@ -154,6 +156,8 @@ class PlanRead(BaseModel):
 class PlanWrite(BaseModel):
     plan: StructurePlan
     remember: bool = True
+    # 补齐文件：指定用哪些字段对上已有记录
+    match_key: list[str] | None = Field(default=None, max_length=6)
 
 
 class GapRead(BaseModel):
@@ -163,6 +167,48 @@ class GapRead(BaseModel):
     label: str
     count: int
     reason: str = "missing"
+    tier: str | None = None
+    gain: int = 0
+
+
+class RoundRead(BaseModel):
+    id: str
+    seq: int
+    trigger: str
+    task_id: str | None
+    action_id: str | None
+    report: dict[str, object]
+    created_at: datetime
+
+
+class NextRead(BaseModel):
+    order: list[str]
+    totals: dict[str, int]
+    ready: int
+    conflicts: int
+    gaps: list[dict[str, object]]
+    next: dict[str, object]
+
+
+class MessageWrite(BaseModel):
+    text: str = Field(min_length=1, max_length=500)
+    dataset_code: str | None = None
+
+
+class ActionRead(BaseModel):
+    id: str
+    batch_id: str
+    message: str
+    action: dict[str, object]
+    preview: dict[str, object]
+    status: str
+    created_at: datetime
+    applied_at: datetime | None
+
+
+class MessageResult(BaseModel):
+    reply: str
+    action: ActionRead | None = None
 
 
 class CompleteResult(BaseModel):

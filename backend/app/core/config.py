@@ -45,6 +45,11 @@ class Settings(BaseSettings):
     ingest_llm_budget: int = 80
     ingest_auto_complete: bool = True
     ingest_template_global_scope: bool = True
+    supplement_min_match_rate: float = 0.9
+    supplement_max_conflict_rate: float = 0.05
+    supplement_template_fields: int = 5
+    ai_batch_max_action_calls: int = 100
+    action_proposal_ttl_minutes: int = 30
 
     # 认证
     jwt_secret_key: str = "dev-only-secret-change-me-before-deploying-0123456789"

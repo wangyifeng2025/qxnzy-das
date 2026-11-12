@@ -1,11 +1,23 @@
 "use client";
 
 import type { RowSelectionState } from "@tanstack/react-table";
-import { FilePlus2, FileSpreadsheet, RefreshCw, RotateCcw, Trash2, X } from "lucide-react";
+import {
+  FilePlus2,
+  FileSpreadsheet,
+  RefreshCw,
+  RotateCcw,
+  Trash2,
+  X,
+} from "lucide-react";
 import Link from "next/link";
 import { useCallback, useMemo, useState, useEffect } from "react";
 
 import { createAppColumnHelper, DataTable, TablePagination, useAppTable } from "@/components/data-table";
+import {
+  BatchConversation,
+  SupplementSummary,
+  useBatchState,
+} from "@/components/ingest/batch-conversation";
 import { PlanReview } from "@/components/ingest/plan-review";
 import { STEPS, StepBar, type StepKey } from "@/components/ingest/step-bar";
 import {
@@ -15,9 +27,7 @@ import {
   TRIAGE_BADGE,
   TRIAGE_LABEL,
   tone,
-  type BatchRead,
   type Candidate,
-  type GapRead,
   type IngestTask,
   type MappingItem,
   type PlanRead,
@@ -32,6 +42,8 @@ import { optionLabel, type DatasetMeta, type FieldMeta } from "@/lib/records";
 import { readSession, type DatasetAccess } from "@/lib/session";
 
 const PAGE_SIZE = 20;
+const VIEW_KEY = "ai-parse:view";
+type View = "chat" | "review";
 /** 确认写入时每批提交的候选条数：分批可以让进度条真实反映写入量，并在单批失败时保住已完成的数据。 */
 const CONFIRM_BATCH = 20;
 /** 批量设置字段时每批提交的条数：后端单次最多 500 条，勾选全量时要分批。 */
@@ -82,8 +94,9 @@ export default function AiParsePage() {
   const [candidates, setCandidates] = useState<Candidate[]>([]);
   const [mappings, setMappings] = useState<MappingItem[]>([]);
   const [plan, setPlan] = useState<PlanRead | null>(null);
-  const [batchInfo, setBatchInfo] = useState<{ id: string; batch: BatchRead; gaps: GapRead[] } | null>(null);
   const [batchTick, setBatchTick] = useState(0);
+  /** 「补齐对话」和「核对数据」两个视图各占满全高，上次停留的视图记在本地 */
+  const [view, setViewState] = useState<View>("chat");
   const [rememberPlan, setRememberPlan] = useState(true);
   const [triageFilter, setTriageFilter] = useState<Candidate["triage"] | "">("");
   const [requiredOnly, setRequiredOnly] = useState(false);
@@ -124,8 +137,13 @@ export default function AiParsePage() {
   }
 
   async function loadDetail(task: IngestTask) {
+    // 补齐文件不新建候选，核对的是本批次该数据表的全部候选
+    const candidatePath =
+      task.mode === "supplement" && task.batch_id
+        ? `/api/ingestion/batches/${task.batch_id}/candidates?dataset_code=${task.dataset_code}&limit=500`
+        : `/api/ingestion/tasks/${task.id}/candidates`;
     const [rows, planBody] = await Promise.all([
-      api<Candidate[]>(`/api/ingestion/tasks/${task.id}/candidates`),
+      api<Candidate[]>(candidatePath),
       api<PlanRead>(`/api/ingestion/tasks/${task.id}/plan`).catch(() => null),
     ]);
     setCandidates(rows);
@@ -183,21 +201,27 @@ export default function AiParsePage() {
     };
   }, [selectedId, selectedStatus, toast]);
 
+  const batchTasks = selectedBatchId ? tasks.filter((task) => task.batch_id === selectedBatchId) : [];
+  const batchVersion = `${batchTick}|${batchTasks.map((task) => `${task.id}:${task.status}`).join("|")}`;
+  const batchState = useBatchState(selectedBatchId, batchVersion);
+  const proposedCount = batchState.actions.filter((action) => action.status === "proposed").length;
+
   useEffect(() => {
-    if (!selectedBatchId) return;
-    let cancelled = false;
     queueMicrotask(() => {
-      void api<{ batch: BatchRead; gaps: GapRead[] }>(`/api/ingestion/batches/${selectedBatchId}`)
-        .then((body) => {
-          if (cancelled) return;
-          setBatchInfo({ id: selectedBatchId, batch: body.batch, gaps: body.gaps ?? [] });
-        })
-        .catch(() => undefined);
+      if (window.localStorage.getItem(VIEW_KEY) === "review") setViewState("review");
     });
-    return () => {
-      cancelled = true;
-    };
-  }, [selectedBatchId, batchTick]);
+  }, []);
+
+  function setView(next: View) {
+    setViewState(next);
+    window.localStorage.setItem(VIEW_KEY, next);
+  }
+
+  /** 从对话里跳到某个文件：选中它并切到核对视图 */
+  function openTask(id: string) {
+    selectTask(id);
+    setView("review");
+  }
 
   useEffect(() => {
     if (!selectedId) return;
@@ -239,6 +263,13 @@ export default function AiParsePage() {
     setWriteError("");
   }
 
+  function showTriage(next: "auto" | "review" | "missing") {
+    setView("review");
+    setTriageFilter(next);
+    candidateTable.setPageIndex(0);
+    setViewChoice({ task: selectedId, from: currentStep, step: "review" });
+  }
+
   async function createTask() {
     if (!datasetCode || files.length === 0) {
       toast("请选择数据表和文件", "info");
@@ -254,14 +285,8 @@ export default function AiParsePage() {
         body.set("fresh_plan", String(freshPlan));
         body.set("file", files[0]);
         first = await upload<IngestTask>(`/api/ingestion/batches/${selected.batch_id}/files`, body);
-      } else if (files.length === 1) {
-        const body = new FormData();
-        body.set("dataset_code", datasetCode);
-        body.set("prompt", prompt);
-        body.set("fresh_plan", String(freshPlan));
-        body.set("file", files[0]);
-        first = await upload<IngestTask>("/api/ingestion/tasks", body);
       } else {
+        // 单个文件也建批次，后续补充文件和对话都挂在这个批次上
         const batch = await api<{ id: string }>("/api/ingestion/batches", {
           method: "POST",
           body: JSON.stringify({ dataset_codes: [datasetCode] }),
@@ -534,7 +559,9 @@ export default function AiParsePage() {
       for (let start = 0; start < total; start += CONFIRM_BATCH) {
         const batch = ids.slice(start, start + CONFIRM_BATCH);
         const result = await api<{ created: number; submitted: number }>(
-          `/api/ingestion/tasks/${task.id}/confirm`,
+          task.mode === "supplement" && task.batch_id
+            ? `/api/ingestion/batches/${task.batch_id}/confirm`
+            : `/api/ingestion/tasks/${task.id}/confirm`,
           { method: "POST", body: JSON.stringify({ candidate_ids: batch, submit }) },
         );
         created += result.created;
@@ -736,7 +763,7 @@ export default function AiParsePage() {
           </span>
         ),
         cell: ({ row }) => <FieldCell row={row.original} field={field} meta={meta} />,
-        meta: { headClassName: "min-w-[112px] max-w-[220px]", cellClassName: "max-w-[220px] px-3 py-2" },
+        meta: { headClassName: "min-w-[112px] max-w-[220px]", cellClassName: "max-w-[220px] px-3 py-1.5" },
       }),
     );
 
@@ -773,7 +800,7 @@ export default function AiParsePage() {
         ),
         meta: {
           headClassName: "sticky left-0 z-20 w-10 min-w-10 bg-zinc-50 px-3",
-          cellClassName: `${STICKY_CELL} left-0 w-10 min-w-10 px-3 py-2`,
+          cellClassName: `${STICKY_CELL} left-0 w-10 min-w-10 px-3 py-1.5`,
         },
       }),
       candidateHelper.display({
@@ -782,29 +809,25 @@ export default function AiParsePage() {
         cell: ({ row }) => row.original.seq,
         meta: {
           headClassName: `sticky left-10 z-20 w-12 min-w-12 bg-zinc-50 px-1 text-center ${EDGE_LEFT}`,
-          cellClassName: `${STICKY_CELL} left-10 w-12 min-w-12 px-1 py-2 text-center tabular-nums text-zinc-400 ${EDGE_LEFT}`,
+          cellClassName: `${STICKY_CELL} left-10 w-12 min-w-12 px-1 py-1.5 text-center tabular-nums text-zinc-400 ${EDGE_LEFT}`,
         },
       }),
       candidateHelper.display({
         id: "triage",
         header: "分诊",
         cell: ({ row }) => (
-          <div className="space-y-1">
+          <div className="flex items-center gap-1.5 whitespace-nowrap" title={`完整度 ${row.original.completeness}%`}>
             <span className={`rounded-full px-2 py-0.5 text-[10px] font-medium ${TRIAGE_BADGE[row.original.triage]}`}>
               {TRIAGE_LABEL[row.original.triage]}
             </span>
-            <div className="flex items-center gap-1.5 text-[10px] tabular-nums text-zinc-400">
-              <span className="h-1 w-10 overflow-hidden rounded-full bg-zinc-100">
-                <span
-                  className={`block h-full rounded-full ${row.original.completeness >= 80 ? "bg-emerald-400" : "bg-amber-400"}`}
-                  style={{ width: `${Math.min(100, row.original.completeness)}%` }}
-                />
-              </span>
+            <span
+              className={`text-[10px] tabular-nums ${row.original.completeness >= 80 ? "text-emerald-600" : "text-amber-600"}`}
+            >
               {row.original.completeness}%
-            </div>
+            </span>
           </div>
         ),
-        meta: { headClassName: "min-w-[96px]", cellClassName: "py-2" },
+        meta: { headClassName: "min-w-[112px]", cellClassName: "py-1.5" },
       }),
       candidateHelper.display({
         id: "issues",
@@ -823,17 +846,17 @@ export default function AiParsePage() {
           ];
           if (items.length === 0) return <span className="text-[11px] text-emerald-600">通过</span>;
           return (
-            <ul className="space-y-0.5 text-[11px] leading-4" title={items.map((item) => item.text).join("\n")}>
-              {items.slice(0, 2).map((item, index) => (
-                <li key={`${index}-${item.text}`} className={`line-clamp-2 ${item.tone}`}>
-                  {item.text}
-                </li>
-              ))}
-              {items.length > 2 ? <li className="text-zinc-400">等 {items.length} 项</li> : null}
-            </ul>
+            <div className="flex min-w-0 items-center gap-1.5 text-[11px]" title={items.map((item) => item.text).join("\n")}>
+              <span className={`min-w-0 truncate ${items[0].tone}`}>{items[0].text}</span>
+              {items.length > 1 ? (
+                <span className="shrink-0 rounded-full bg-zinc-100 px-1.5 text-[10px] text-zinc-500 tabular-nums">
+                  等 {items.length} 项
+                </span>
+              ) : null}
+            </div>
           );
         },
-        meta: { headClassName: "min-w-[200px] w-[200px]", cellClassName: "w-[200px] py-2 whitespace-normal" },
+        meta: { headClassName: "min-w-[240px] w-[240px]", cellClassName: "w-[240px] max-w-[240px] py-1.5" },
       }),
       ...fieldColumns,
       candidateHelper.display({
@@ -863,7 +886,7 @@ export default function AiParsePage() {
           ),
         meta: {
           headClassName: `sticky right-0 z-20 min-w-[132px] bg-zinc-50 ${EDGE_RIGHT}`,
-          cellClassName: `${STICKY_CELL} right-0 min-w-[132px] py-2 ${EDGE_RIGHT}`,
+          cellClassName: `${STICKY_CELL} right-0 min-w-[132px] py-1.5 ${EDGE_RIGHT}`,
         },
       }),
     ].filter((column) => hasPending || column.id !== "actions"));
@@ -888,21 +911,109 @@ export default function AiParsePage() {
 
   const stepIndex = STEPS.findIndex((step) => step.key === viewing);
 
+  const conversation = (collapsed: boolean) =>
+    selected?.batch_id ? (
+      <BatchConversation
+        collapsed={collapsed}
+        state={batchState}
+        batchId={selected.batch_id}
+        datasetCode={selected.dataset_code}
+        names={names}
+        tasks={batchTasks}
+        onExpand={() => setView("chat")}
+        onRemoveBatch={() => askDelete("batch", selected.batch_id as string, `批次：${batchTasks.length} 个文件`)}
+        onSelectTask={openTask}
+        onUploaded={(task) => {
+          selectTask(task.id);
+          void loadTasks();
+        }}
+        onChanged={() => {
+          setBatchTick((current) => current + 1);
+          void Promise.allSettled([loadTasks(), loadDetail(selected)]);
+        }}
+        onShowTriage={showTriage}
+      />
+    ) : null;
+
+  const taskPicker = (
+    <select
+      className="h-8 w-56 min-w-0 shrink-0 rounded-md border border-zinc-200 bg-white px-2 text-[12px] text-zinc-800"
+      value={selectedId}
+      aria-label="切换任务"
+      onChange={(event) => event.target.value && selectTask(event.target.value)}
+    >
+      <option value="">选择任务…</option>
+      {tasks.map((task) => (
+        <option key={task.id} value={task.id}>
+          {task.file_name || task.dataset_code}（{STATUS_LABEL[task.status] || task.status}）
+        </option>
+      ))}
+    </select>
+  );
+
   return (
     <div className="flex h-full min-h-0 flex-col gap-3 p-4 xl:p-6">
-      <div className="flex shrink-0 flex-wrap items-baseline gap-x-3 gap-y-1">
+      <div className="flex shrink-0 flex-wrap items-center gap-x-3 gap-y-2">
         <h1 className="text-[18px] font-semibold tracking-tight text-zinc-900">文件解析入库</h1>
-        <p className="text-[11px] text-zinc-500">上传表格、Word 或可复制文字的 PDF，核对后生成草稿，再进入审核流程。</p>
+        <p className="hidden text-[11px] text-zinc-500 xl:block">
+          上传表格、Word 或可复制文字的 PDF，核对后生成草稿，再进入审核流程。
+        </p>
+        <div className="ml-auto flex rounded-lg bg-zinc-100 p-0.5 text-[12px]" role="tablist" aria-label="视图">
+          {(
+            [
+              ["chat", "补齐对话"],
+              ["review", "核对数据"],
+            ] as const
+          ).map(([key, label]) => (
+            <button
+              key={key}
+              type="button"
+              role="tab"
+              aria-selected={view === key}
+              className={`relative flex h-7 items-center gap-1.5 rounded-md px-3 transition ${
+                view === key ? "bg-white font-medium text-zinc-900 shadow-sm" : "text-zinc-500 hover:text-zinc-800"
+              }`}
+              onClick={() => setView(key)}
+            >
+              {label}
+              {key === "chat" && proposedCount > 0 ? (
+                <span className="flex size-4 items-center justify-center rounded-full bg-amber-500 text-[10px] text-white tabular-nums">
+                  {proposedCount}
+                </span>
+              ) : null}
+            </button>
+          ))}
+        </div>
       </div>
 
-      <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto lg:grid lg:grid-cols-[220px_minmax(0,1fr)] lg:overflow-hidden xl:grid-cols-[260px_minmax(0,1fr)]">
-        <section className="flex max-h-72 shrink-0 flex-col overflow-hidden rounded-lg border border-zinc-200 bg-white shadow-sm lg:max-h-none lg:min-h-0">
-          <div className="flex shrink-0 items-center justify-between gap-2 border-b border-zinc-100 px-3 py-3">
-            <div className="pl-1">
+      <div className="flex min-h-0 flex-1 flex-col gap-3 overflow-y-auto md:overflow-hidden">
+        {view === "review" ? (
+          <div className="flex shrink-0 items-center gap-3 rounded-lg border border-zinc-200 bg-white px-3 py-2 shadow-sm">
+            {taskPicker}
+            <button
+              type="button"
+              className="flex size-8 shrink-0 items-center justify-center rounded-md bg-zinc-900 text-white hover:bg-zinc-700"
+              title="新建解析"
+              aria-label="新建解析"
+              onClick={() => setUploadOpen(true)}
+            >
+              <FilePlus2 className="size-3.5" aria-hidden="true" />
+            </button>
+            {conversation(true) ?? (
+              <span className="min-w-0 flex-1 truncate text-[12px] text-zinc-400">
+                {selected ? "这个任务不在批次中，没有补齐对话" : "选择任务后可在这里补齐数据"}
+              </span>
+            )}
+          </div>
+        ) : (
+          <div className="flex min-h-0 flex-1 flex-col gap-3 md:flex-row">
+        <section className="flex max-h-72 shrink-0 flex-col overflow-hidden rounded-lg border border-zinc-200 bg-white shadow-sm md:max-h-none md:min-h-0 md:w-[280px]">
+          <div className="flex shrink-0 items-center justify-between gap-2 border-b border-zinc-100 px-3 py-2">
+            <div className="min-w-0 pl-1">
               <h2 className="text-sm font-semibold text-zinc-900">我的任务</h2>
-              <p className="mt-0.5 text-[10px] text-zinc-400">最近 50 条</p>
+              <p className="text-[10px] text-zinc-400">最近 50 条</p>
             </div>
-            <button type="button" className={`${primaryButton} h-8 px-2.5`} onClick={() => setUploadOpen(true)}>
+            <button type="button" className={`${primaryButton} h-8 shrink-0 px-2.5`} onClick={() => setUploadOpen(true)}>
               <FilePlus2 className="size-3.5" aria-hidden="true" />
               新建解析
             </button>
@@ -953,10 +1064,34 @@ export default function AiParsePage() {
           </ul>
         </section>
 
-        <section className="flex min-h-[560px] min-w-0 flex-col overflow-hidden rounded-lg border border-zinc-200 bg-white shadow-sm lg:min-h-0">
+            <div className="flex min-h-[320px] min-w-0 flex-1 overflow-hidden rounded-lg border border-zinc-200 bg-white shadow-sm md:min-h-0">
+              {conversation(false) ?? (
+                <div className="flex flex-1 flex-col items-center justify-center gap-2 p-6 text-center text-[12px] text-zinc-400">
+                  <p className="text-zinc-600">补齐对话</p>
+                  <p className="max-w-md leading-5">
+                    {selected
+                      ? "这个任务不在批次中。新上传的文件都会进入批次，可以在这里多轮补齐缺失字段。"
+                      : "选择一个批内任务后，这里会显示每一轮填进了什么、还缺什么。"}
+                  </p>
+                  {selected ? (
+                    <button type="button" className={`${ghostButton} mt-1`} onClick={() => setView("review")}>
+                      去核对数据
+                    </button>
+                  ) : null}
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        <section
+          className={`min-h-[560px] min-w-0 flex-col overflow-hidden rounded-lg border border-zinc-200 bg-white shadow-sm md:min-h-0 md:flex-1 ${
+            view === "review" ? "flex" : "hidden"
+          }`}
+        >
           {!selected ? (
             <div className="flex flex-1 flex-col items-center justify-center gap-3 p-8 text-center">
-              <p className="text-[13px] text-zinc-700">从左侧选择一个任务，或上传新文件开始解析。</p>
+              <p className="text-[13px] text-zinc-700">从上方选择一个任务，或上传新文件开始解析。</p>
               <p className="max-w-sm text-[12px] leading-5 text-zinc-400">
                 每个任务依次经过解析文件、核对结构、核对候选三步，确认后才会生成草稿。
               </p>
@@ -967,25 +1102,24 @@ export default function AiParsePage() {
             </div>
           ) : (
             <>
-              <header className="flex shrink-0 flex-wrap items-center gap-x-4 gap-y-2.5 border-b border-zinc-100 px-5 py-3">
-                <div className="order-1 min-w-0 flex-1">
+              <header className="flex shrink-0 flex-wrap items-center gap-x-4 gap-y-1.5 border-b border-zinc-100 px-5 py-2">
+                <div className="min-w-0 flex-1">
                   <h2 className="truncate text-[14px] font-semibold text-zinc-900" title={selected.file_name ?? ""}>
                     {selected.file_name || "未命名文件"}
                   </h2>
-                  <p className="mt-0.5 truncate text-[11px] text-zinc-500">
+                  <p
+                    className="truncate text-[11px] text-zinc-500"
+                    title={selected.user_prompt ? `补充说明：${selected.user_prompt}` : undefined}
+                  >
                     导入到「{names.get(selected.dataset_code) || selected.dataset_code}」
                     {selected.plan_source ? `，结构来自${PLAN_SOURCE_LABEL[selected.plan_source] ?? selected.plan_source}` : ""}
                     {selected.llm_calls > 0
                       ? `，调用模型 ${selected.llm_calls} 次、${(selected.tokens_in + selected.tokens_out).toLocaleString()} tokens`
                       : ""}
+                    {selected.user_prompt ? <span className="text-zinc-400">，补充说明：{selected.user_prompt}</span> : null}
                   </p>
-                  {selected.user_prompt ? (
-                    <p className="mt-0.5 truncate text-[11px] text-zinc-400" title={selected.user_prompt}>
-                      补充说明：{selected.user_prompt}
-                    </p>
-                  ) : null}
                 </div>
-                <div className="order-3 basis-full 2xl:order-2 2xl:basis-auto">
+                <div className="shrink-0">
                   <StepBar
                     current={currentStep}
                     viewing={viewing}
@@ -993,7 +1127,7 @@ export default function AiParsePage() {
                     onSelect={(step) => setViewChoice({ task: selectedId, from: currentStep, step })}
                   />
                 </div>
-                <div className="order-2 flex shrink-0 items-center gap-1 2xl:order-3">
+                <div className="flex shrink-0 items-center gap-1">
                   {canReplan ? (
                     <button
                       type="button"
@@ -1024,6 +1158,10 @@ export default function AiParsePage() {
 
               {viewing !== "parse" && !ready ? (
                 <div className="flex flex-1 items-center justify-center text-[12px] text-zinc-400">正在加载任务详情…</div>
+              ) : null}
+
+              {viewing === "plan" && plan?.dry_run?.supplement ? (
+                <SupplementSummary detail={plan.dry_run.supplement} />
               ) : null}
 
               {viewing === "plan" && plan?.plan ? (
@@ -1091,37 +1229,7 @@ export default function AiParsePage() {
                   </div>
                 ) : (
                   <div className="flex min-h-0 flex-1 flex-col">
-                    {batchInfo && batchInfo.id === selectedBatchId ? (
-                      <div className="flex shrink-0 flex-wrap items-center gap-x-3 gap-y-1 border-b border-zinc-100 bg-zinc-50/60 px-5 py-2 text-[11px] text-zinc-600">
-                        <span className="font-medium text-zinc-800">批次汇总</span>
-                        <span>{batchInfo.batch.task_count} 个文件</span>
-                        <span>{batchInfo.batch.candidate_count} 条候选</span>
-                        {batchInfo.gaps.length > 0 ? (
-                          <span className="min-w-0 truncate" title={batchInfo.gaps.map((gap) => `${gap.dataset_name}.${gap.label} ×${gap.count}`).join("、")}>
-                            主要缺口：
-                            {batchInfo.gaps
-                              .slice(0, 3)
-                              .map((gap) => `${gap.label} ×${gap.count}`)
-                              .join("、")}
-                            {batchInfo.gaps.length > 3 ? ` 等 ${batchInfo.gaps.length} 项` : ""}
-                          </span>
-                        ) : (
-                          <span className="text-emerald-700">批次必填项已全部覆盖</span>
-                        )}
-                        <button
-                          type="button"
-                          className="ml-auto inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 text-zinc-400 transition hover:bg-rose-50 hover:text-rose-600"
-                          onClick={() =>
-                            askDelete("batch", batchInfo.batch.id, `批次：${batchInfo.batch.title || `${batchInfo.batch.task_count} 个文件`}`)
-                          }
-                        >
-                          <Trash2 className="size-3" />
-                          删除整批
-                        </button>
-                      </div>
-                    ) : null}
-
-                    <div className="flex shrink-0 flex-wrap items-center gap-x-4 gap-y-2 border-b border-zinc-100 px-5 py-2.5 text-[11px]">
+                    <div className="flex shrink-0 flex-wrap items-center gap-x-4 gap-y-1.5 border-b border-zinc-100 px-5 py-2 text-[11px]">
                       <div className="flex flex-wrap gap-1.5" role="group" aria-label="按分诊筛选">
                         <button
                           type="button"
@@ -1208,20 +1316,20 @@ export default function AiParsePage() {
                       </div>
                     </div>
 
-                    <div className="flex min-h-0 flex-1 flex-col px-5 pt-3">
+                    <div className="flex min-h-0 flex-1 flex-col px-5 pt-2">
                       <DataTable
                         table={candidateTable}
                         stickyHeader
                         className="w-max min-w-full border-separate border-spacing-0 [&_td]:border-b [&_td]:border-zinc-100 [&_th]:border-b [&_th]:border-zinc-200"
-                        containerClassName="min-h-[320px] flex-1 overflow-auto rounded-lg border border-zinc-200 lg:min-h-0 [scrollbar-color:#d4d4d8_transparent] [scrollbar-width:thin]"
+                        containerClassName="min-h-[260px] flex-1 overflow-auto rounded-lg border border-zinc-200 md:min-h-0 [scrollbar-color:#d4d4d8_transparent] [scrollbar-width:thin]"
                         rowClassName={(row) =>
-                          `group/row align-top ${row.getIsSelected() ? "bg-sky-50 hover:bg-sky-50" : "hover:bg-zinc-50"}`
+                          `group/row align-middle ${row.getIsSelected() ? "bg-sky-50 hover:bg-sky-50" : "hover:bg-zinc-50"}`
                         }
                       />
-                      <TablePagination table={candidateTable} className="shrink-0 border-t-0 px-0 py-2" />
+                      <TablePagination table={candidateTable} className="shrink-0 border-t-0 px-0 py-1.5" />
                     </div>
 
-                    <div className="flex shrink-0 flex-col gap-2 border-t border-zinc-200 bg-zinc-50/80 px-5 py-3">
+                    <div className="flex shrink-0 flex-col gap-2 border-t border-zinc-200 bg-zinc-50/80 px-5 py-2">
                       {writing ? (
                         <div>
                           <div className="flex items-center justify-between gap-3 text-[11px] text-zinc-600">
@@ -1257,18 +1365,29 @@ export default function AiParsePage() {
                           </button>
                         </div>
                       ) : null}
-                      <div className="flex flex-wrap items-center gap-3 text-[12px]">
-                        <span className="text-zinc-500">
+                      <div className="flex items-center gap-3 text-[12px]">
+                        <span className="shrink-0 text-zinc-500">
                           可确认 <b className="font-semibold text-zinc-800 tabular-nums">{pickable.length}</b> 条，已生成草稿{" "}
                           <b className="font-semibold text-zinc-800 tabular-nums">{written}</b> 条
                         </span>
-                        {picked.length > pickedConfirmable ? (
-                          <span className="text-amber-600">
-                            所选 {picked.length} 条里有 {picked.length - pickedConfirmable} 条需先修正或补齐业务主键，确认时会跳过
-                          </span>
-                        ) : null}
-                        {blockedReason ? <span className="text-amber-600">{blockedReason}</span> : null}
-                        <label className="ml-auto flex items-center gap-1 text-zinc-600">
+                        <span
+                          className="min-w-0 flex-1 truncate text-amber-600"
+                          title={[
+                            picked.length > pickedConfirmable
+                              ? `所选 ${picked.length} 条里有 ${picked.length - pickedConfirmable} 条需先修正或补齐业务主键，确认时会跳过`
+                              : "",
+                            blockedReason ?? "",
+                          ]
+                            .filter(Boolean)
+                            .join("；")}
+                        >
+                          {picked.length > pickedConfirmable
+                            ? `所选 ${picked.length} 条里有 ${picked.length - pickedConfirmable} 条需先修正或补齐业务主键，确认时会跳过`
+                            : ""}
+                          {picked.length > pickedConfirmable && blockedReason ? "；" : ""}
+                          {blockedReason}
+                        </span>
+                        <label className="flex shrink-0 items-center gap-1 text-zinc-600">
                           <input
                             type="checkbox"
                             checked={submit}
@@ -1280,7 +1399,7 @@ export default function AiParsePage() {
                         {autoConfirmable.length > 0 ? (
                           <button
                             type="button"
-                            className="h-9 rounded-md border border-emerald-200 bg-emerald-50 px-3 text-xs font-medium text-emerald-700 transition hover:bg-emerald-100 disabled:opacity-50"
+                            className="h-8 shrink-0 rounded-md border border-emerald-200 bg-emerald-50 px-3 text-xs font-medium text-emerald-700 transition hover:bg-emerald-100 disabled:opacity-50"
                             disabled={busy || Boolean(writing)}
                             onClick={() => void confirmSelected(autoConfirmable)}
                             title="仅确认无需复核且必填齐全的候选"
@@ -1290,7 +1409,7 @@ export default function AiParsePage() {
                         ) : null}
                         <button
                           type="button"
-                          className={primaryButton}
+                          className={`${primaryButton} h-8 shrink-0`}
                           disabled={busy || pickedConfirmable === 0}
                           onClick={() => void confirmSelected()}
                         >

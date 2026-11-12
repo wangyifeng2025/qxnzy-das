@@ -1,7 +1,7 @@
 "use client";
 
 import { AlertTriangle, ChevronDown, X } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useMemo, useState, type ReactNode } from "react";
 
 import { primaryButton } from "@/components/page-bits";
 import type { DatasetMeta } from "@/lib/records";
@@ -120,6 +120,8 @@ export function PlanReview({
   const [activeSheet, setActiveSheet] = useState(0);
   const [filter, setFilter] = useState<Filter>("all");
   const [previewOpen, setPreviewOpen] = useState(false);
+  const [requiredOpen, setRequiredOpen] = useState(false);
+  const [dedupeOpen, setDedupeOpen] = useState(false);
   const [flash, setFlash] = useState<string | null>(null);
 
   const current = sheets[Math.min(activeSheet, Math.max(0, sheets.length - 1))];
@@ -199,8 +201,12 @@ export function PlanReview({
         {!editable ? <span className="ml-auto text-zinc-400">结构已确认，只读查看</span> : null}
       </div>
 
-      <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto p-4 lg:flex-row lg:overflow-hidden">
-        <section className="flex min-h-[420px] min-w-0 flex-1 flex-col overflow-hidden rounded-lg border border-zinc-200 lg:min-h-0" aria-label="列与字段对应">
+      <div className="flex min-h-0 flex-1 flex-col gap-3 overflow-y-auto p-4 [scrollbar-width:thin] 2xl:flex-row 2xl:overflow-hidden">
+        <div className="flex min-w-0 flex-col gap-3 2xl:min-h-0 2xl:flex-1">
+        <section
+          className="flex max-h-[70vh] min-h-[360px] min-w-0 shrink-0 flex-col overflow-hidden rounded-lg border border-zinc-200 2xl:max-h-none 2xl:min-h-0 2xl:flex-1 2xl:shrink"
+          aria-label="列与字段对应"
+        >
           <div className="flex shrink-0 flex-wrap items-center gap-2 border-b border-zinc-100 px-3 py-2 text-[12px]">
             {sheets.length > 1 ? (
               <div className="flex gap-1" role="tablist" aria-label="工作表">
@@ -246,29 +252,20 @@ export function PlanReview({
               ))}
             </div>
           </div>
-          {current?.sheet.role === "main" ? (
-            <DedupeBar
-              fields={meta?.fields ?? []}
-              businessKey={meta?.business_key_fields ?? []}
-              value={current.sheet.dedupe_by ?? []}
-              editable={editable && !busy}
-              onChange={(next) => onDedupeChange(current.index, next)}
-            />
-          ) : null}
           <div className="min-h-0 flex-1 overflow-auto [scrollbar-width:thin]">
-            <table className="w-full table-fixed text-left text-[12px]">
+            <table className="w-full min-w-[720px] table-fixed text-left text-[12px]">
               <colgroup>
-                <col className="w-10" />
-                <col className="w-[30%]" />
+                <col className="w-12" />
+                <col className="w-[26%]" />
                 <col />
-                <col className="w-44" />
+                <col className="w-60" />
               </colgroup>
               <thead className="sticky top-0 z-10 bg-zinc-50 text-[11px] text-zinc-500">
                 <tr>
-                  <th className="px-3 py-2 text-center font-medium">#</th>
-                  <th className="px-3 py-2 font-medium">文件中的列</th>
-                  <th className="px-3 py-2 font-medium">样例值（前 3 行）</th>
-                  <th className="px-3 py-2 font-medium">导入到字段</th>
+                  <th className="px-3 py-2 text-center font-medium whitespace-nowrap">#</th>
+                  <th className="px-3 py-2 font-medium whitespace-nowrap">文件中的列</th>
+                  <th className="px-3 py-2 font-medium whitespace-nowrap">样例值（前 3 行）</th>
+                  <th className="px-3 py-2 font-medium whitespace-nowrap">导入到字段</th>
                 </tr>
               </thead>
               <tbody>
@@ -344,12 +341,53 @@ export function PlanReview({
           </div>
         </section>
 
-        <aside className="flex shrink-0 flex-col rounded-lg border border-zinc-200 lg:min-h-0 lg:w-72" aria-label="必填字段核对">
-          <div className="shrink-0 border-b border-zinc-100 px-3 py-2">
-            <p className="text-[12px] font-medium text-zinc-800">必填字段</p>
-            <p className="mt-0.5 text-[11px] text-zinc-400">点击已对应的字段可定位到列</p>
-          </div>
-          <ul className="min-h-0 flex-1 divide-y divide-zinc-100 overflow-y-auto pb-2 text-[12px] [scrollbar-width:thin]">
+        {current?.sheet.role === "main" ? (
+          <Fold
+            open={dedupeOpen}
+            onToggle={() => setDedupeOpen((open) => !open)}
+            title="重复判定"
+            summary={
+              (current.sheet.dedupe_by ?? []).length
+                ? `按 ${(current.sheet.dedupe_by ?? []).map((code) => labels.get(code) ?? code).join(" + ")} 合并`
+                : "默认按业务主键"
+            }
+          >
+            <DedupeBar
+              fields={meta?.fields ?? []}
+              businessKey={meta?.business_key_fields ?? []}
+              value={current.sheet.dedupe_by ?? []}
+              editable={editable && !busy}
+              onChange={(next) => onDedupeChange(current.index, next)}
+            />
+          </Fold>
+        ) : null}
+        </div>
+
+        <aside
+          className="flex shrink-0 flex-col overflow-hidden rounded-lg border border-zinc-200 2xl:min-h-0 2xl:w-80"
+          aria-label="必填字段核对"
+        >
+          <button
+            type="button"
+            className="flex shrink-0 items-center gap-2 px-3 py-2 text-left 2xl:pointer-events-none 2xl:border-b 2xl:border-zinc-100"
+            aria-expanded={requiredOpen}
+            onClick={() => setRequiredOpen((open) => !open)}
+          >
+            <ChevronDown
+              className={`size-3.5 shrink-0 text-zinc-400 transition 2xl:hidden ${requiredOpen ? "" : "-rotate-90"}`}
+              aria-hidden="true"
+            />
+            <span className="text-[12px] font-medium text-zinc-800">必填字段</span>
+            <span className={`truncate text-[11px] ${missing.length ? "text-amber-700" : "text-zinc-400"}`}>
+              共 {required.length} 项{missing.length ? `，文件缺少 ${missing.length} 项` : "，都有来源"}
+            </span>
+            <span className="ml-auto hidden shrink-0 text-[11px] text-zinc-400 sm:inline">点击可定位到列</span>
+          </button>
+          <ul
+            className={`min-h-0 flex-1 divide-y divide-zinc-100 overflow-y-auto border-t border-zinc-100 pb-2 text-[12px] [scrollbar-width:thin] 2xl:block 2xl:border-t-0 2xl:divide-y ${
+              requiredOpen ? "sm:grid sm:grid-cols-2 sm:divide-y-0 lg:grid-cols-3" : "hidden"
+            }`}
+          >
             {required.map((field) => {
               const from = providers.get(field.code);
               const gap = gaps.get(field.code);
@@ -396,7 +434,11 @@ export function PlanReview({
             })}
           </ul>
           {missing.length > 0 ? (
-            <p className="shrink-0 border-t border-zinc-100 bg-amber-50/50 px-3 py-2 text-[11px] leading-4 text-amber-800">
+            <p
+              className={`shrink-0 border-t border-zinc-100 bg-amber-50/50 px-3 py-2 text-[11px] leading-4 text-amber-800 ${
+                requiredOpen ? "" : "hidden 2xl:block"
+              }`}
+            >
               缺少的必填项可以先继续，下一步用「批量设置字段」统一填入。
             </p>
           ) : null}
@@ -468,6 +510,31 @@ export function PlanReview({
         </div>
       ) : null}
     </div>
+  );
+}
+
+function Fold({
+  open,
+  onToggle,
+  title,
+  summary,
+  children,
+}: {
+  open: boolean;
+  onToggle: () => void;
+  title: string;
+  summary: string;
+  children: ReactNode;
+}) {
+  return (
+    <section className="shrink-0 overflow-hidden rounded-lg border border-zinc-200">
+      <button type="button" className="flex w-full items-center gap-2 px-3 py-2 text-left" aria-expanded={open} onClick={onToggle}>
+        <ChevronDown className={`size-3.5 shrink-0 text-zinc-400 transition ${open ? "" : "-rotate-90"}`} aria-hidden="true" />
+        <span className="text-[12px] font-medium text-zinc-800">{title}</span>
+        <span className="truncate text-[11px] text-zinc-400">{summary}</span>
+      </button>
+      {open ? <div className="border-t border-zinc-100">{children}</div> : null}
+    </section>
   );
 }
 

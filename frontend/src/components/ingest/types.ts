@@ -15,6 +15,9 @@ export type IngestTask = {
   tokens_out: number;
   file_name: string | null;
   candidate_count: number;
+  /** initial 新建候选；supplement 只给批次里已有候选补空字段；auto 尚未判断 */
+  mode?: string;
+  match_key?: string[] | null;
   created_at: string;
 };
 
@@ -89,6 +92,26 @@ export type DryRun = {
   gaps?: PlanGap[];
   conditional?: PlanGap[];
   samples?: { dataset_code: string; sheet: string; row: number; values: Record<string, unknown> }[];
+  supplement?: SupplementDetail;
+};
+
+/** 补齐文件按匹配键对上已有记录的结果，未达到自动补齐条件时需要用户确认。 */
+export type SupplementDetail = {
+  error?: string;
+  key?: string[];
+  key_labels?: string[];
+  fields?: string[];
+  field_labels?: string[];
+  rows: number;
+  matched: number;
+  match_rate?: number;
+  no_key?: number;
+  ambiguous?: number;
+  extra?: number;
+  extra_samples?: string[];
+  conflicts?: number;
+  fill_counts?: Record<string, number>;
+  samples?: { candidate_id: string; updates: Record<string, unknown>; conflicts: number }[];
 };
 
 export type PlanRead = {
@@ -127,6 +150,95 @@ export type GapRead = {
   label: string;
   count: number;
   reason: string;
+  tier?: string | null;
+  gain?: number;
+};
+
+export type RoundGap = {
+  dataset_code: string;
+  code: string;
+  label: string;
+  tier: string;
+  count: number;
+  gain: number;
+  unlocks: string[];
+  bulk_hint: boolean;
+};
+
+export type NextStep = {
+  kind: "upload" | "template" | "conflicts" | "confirm" | "plan" | "wait";
+  /** kind 为 plan / wait 时指向需要处理或正在处理的文件 */
+  task_id?: string;
+  dataset_code: string | null;
+  fields: string[];
+  message: string;
+};
+
+export type RoundReport = {
+  seq: number;
+  trigger: "file" | "action";
+  task_id: string | null;
+  action_id: string | null;
+  dataset_code: string | null;
+  file_name?: string;
+  mode?: string;
+  status?: string;
+  message?: string;
+  matched: number;
+  created: number;
+  filled: { code: string; label: string; count: number }[];
+  auto_filled: { code: string; label: string; count: number; via: string }[];
+  new_conflicts: number;
+  completeness_before: number;
+  completeness_after: number;
+  total: number;
+  ready: number;
+  supplement?: SupplementDetail;
+  gaps: RoundGap[];
+  next: NextStep;
+  lines: string[];
+};
+
+export type RoundRead = {
+  id: string;
+  seq: number;
+  trigger: string;
+  task_id: string | null;
+  action_id: string | null;
+  report: RoundReport;
+  created_at: string;
+};
+
+export type NextRead = {
+  order: string[];
+  totals: Record<string, number>;
+  ready: number;
+  conflicts: number;
+  gaps: RoundGap[];
+  next: NextStep;
+};
+
+export type ActionPreview = {
+  count: number;
+  summary: string;
+  samples: { id: string; label: string; field: string; before: string; after: string }[];
+};
+
+export type ActionRead = {
+  id: string;
+  batch_id: string;
+  message: string;
+  action: { action: string; dataset_code: string; field: string | null; value: string | null };
+  preview: ActionPreview;
+  status: "proposed" | "applied" | "rejected" | "expired";
+  created_at: string;
+  applied_at: string | null;
+};
+
+export const TIER_LABEL: Record<string, string> = {
+  P0: "主键",
+  P1: "可带出",
+  P2: "必填",
 };
 
 export const STATUS_LABEL: Record<string, string> = {
@@ -159,6 +271,7 @@ export const PLAN_SOURCE_LABEL: Record<string, string> = {
   exact: "表头精确匹配",
   llm: "模型规划",
   user: "人工确认",
+  supplement: "补充模板",
 };
 
 export const ACTIVE = new Set(["queued", "parsing", "extracting"]);

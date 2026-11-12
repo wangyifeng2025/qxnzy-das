@@ -17,6 +17,7 @@ from app.core.config import resolved_ai, settings
 from app.datasets.access import can_fill, is_center
 from app.datasets.registry import get_dataset
 from app.datasets.spec import DatasetSpec
+from app.ingestion import priority
 from app.ingestion.dedupe import KeyIndex
 from app.ingestion.enrich import LookupCache
 from app.ingestion.file_check import FileRejected, check_upload, rejection
@@ -120,6 +121,8 @@ async def _read(session: DbSession, task: IngestTask) -> IngestTaskRead:
         has_mapping=task.plan is not None or task.column_mapping is not None,
         file_name=filename if isinstance(filename, str) else None,
         candidate_count=int(count or 0),
+        mode=task.mode,
+        match_key=task.match_key,
         created_at=task.created_at,
         finished_at=task.finished_at,
     )
@@ -174,6 +177,7 @@ async def _create_task(
     batch_id: str | None = None,
     *,
     fresh_plan: bool = False,
+    as_new: bool = False,
 ) -> IngestTask:
     spec = get_dataset(dataset_code)
     if not can_fill(user, spec):
@@ -188,7 +192,7 @@ async def _create_task(
     digest = file_digest(content)
     key = hashlib.sha256(
         f"{user.id}|{spec.code}|{digest}|{prompt.strip()}|{batch_id or ''}"
-        f"{'|fresh' if fresh_plan else ''}".encode()
+        f"{'|fresh' if fresh_plan else ''}{'|new' if as_new else ''}".encode()
     ).hexdigest()
     existing = await session.scalar(select(IngestTask).where(IngestTask.idempotency_key == key))
     if existing is not None:
@@ -212,6 +216,8 @@ async def _create_task(
         cancel_requested=False,
         mapping_applied=False,
         fresh_plan=fresh_plan,
+        # 批次文件在解析时再判断是首轮还是补齐；勾选“作为新数据”的直接按首轮处理
+        mode="auto" if batch_id and not as_new else "initial",
         created_at=_now(),
     )
     session.add(task)
@@ -358,6 +364,14 @@ async def update_plan(
     task.plan = plan.model_dump(mode="json")
     task.plan_source = "user"
     task.mapping_applied = True
+    if body.match_key is not None:
+        main = specs[task.dataset_code].field_map()
+        unknown = [code for code in body.match_key if code not in main]
+        if unknown:
+            raise HTTPException(
+                status.HTTP_400_BAD_REQUEST, detail=f"匹配字段不存在：{'、'.join(unknown)}"
+            )
+        task.match_key = list(dict.fromkeys(body.match_key)) or None
     task.status = "queued"
     task.progress = 0
     if body.remember:
@@ -978,12 +992,17 @@ async def _gaps(session: DbSession, batch: IngestBatch) -> list[GapRead]:
     ).all()
     counts: dict[tuple[str, str], int] = {}
     reasons: dict[tuple[str, str], str] = {}
+    ranked: dict[tuple[str, str], priority.Gap] = {}
+    by_dataset: dict[str, list[dict[str, object]]] = {}
     for row in rows:
-        spec = get_dataset(row.dataset_code)
-        for code in missing_required(spec, row.values or {}):
-            key = (spec.code, code)
-            counts[key] = counts.get(key, 0) + 1
+        by_dataset.setdefault(row.dataset_code, []).append(row.values or {})
+    specs = [get_dataset(code) for code in by_dataset]
+    for code in priority.dataset_order(specs):
+        for gap in priority.gaps_for(get_dataset(code), by_dataset[code]):
+            key = (code, gap.code)
+            counts[key] = gap.count
             reasons[key] = "missing"
+            ranked[key] = gap
     tasks = (await session.scalars(select(IngestTask).where(IngestTask.batch_id == batch.id))).all()
     for task in tasks:
         dry = task.dry_run or {}
@@ -998,9 +1017,11 @@ async def _gaps(session: DbSession, batch: IngestBatch) -> list[GapRead]:
             counts[key] = 0
             reasons[key] = str(gap.get("reason") or "no_column")
     result: list[GapRead] = []
-    for (dataset_code, code), count in sorted(counts.items(), key=lambda item: -item[1]):
+    # 字典按插入顺序：先是按优先级排好的缺口，再是只在结构计划里发现的缺列
+    for (dataset_code, code), count in counts.items():
         spec = get_dataset(dataset_code)
         entity = spec.field_map().get(code)
+        rank = ranked.get((dataset_code, code))
         result.append(
             GapRead(
                 dataset_code=dataset_code,
@@ -1009,6 +1030,8 @@ async def _gaps(session: DbSession, batch: IngestBatch) -> list[GapRead]:
                 label=entity.label if entity else code,
                 count=count,
                 reason=reasons.get((dataset_code, code), "missing"),
+                tier=rank.tier if rank else None,
+                gain=rank.gain if rank else 0,
             )
         )
     return result
@@ -1044,12 +1067,13 @@ async def upload_batch_file(
     file: Annotated[UploadFile, File()],
     prompt: Annotated[str, Form()] = "",
     fresh_plan: Annotated[bool, Form()] = False,
+    as_new: Annotated[bool, Form()] = False,
 ) -> IngestTaskRead:
     batch = await _batch_for(session, user, batch_id)
     if dataset_code not in set(batch.dataset_codes or []):
         raise HTTPException(status.HTTP_400_BAD_REQUEST, detail="该数据表不在本批次内")
     task = await _create_task(
-        session, user, dataset_code, file, prompt, batch.id, fresh_plan=fresh_plan
+        session, user, dataset_code, file, prompt, batch.id, fresh_plan=fresh_plan, as_new=as_new
     )
     return await _read(session, task)
 

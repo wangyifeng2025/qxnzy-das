@@ -237,6 +237,21 @@ _LOOKUPS: dict[str, tuple[Lookup, ...]] = {
     ),
 }
 
+_SUPPLEMENT_KEYS: dict[str, tuple[tuple[str, ...], ...]] = {
+    "ODS_ZYSZSJ": (("ZYMC",),),
+    "ODS_KCJBSJ": (("ZYDM", "KCH"), ("KCH",), ("ZYMC", "KCMC"), ("KCMC",)),
+    "ODS_SKXXSJ": (("JGH", "KCH", "BJMC"), ("JSXM", "KCMC", "BJMC")),
+    "ODS_XSJBSJ": (("SFZJH",), ("XSXM", "BJMC")),
+    "ODS_JZGJBSJ": (("SFZJH",), ("JSXM",)),
+    "ODS_XXJXSJ": (("JGH", "JXPXMC"), ("JSXM", "JXPXMC")),
+    "ODS_JSHJSJ": (("DYHJRGH", "HJMC"), ("DYHJRXM", "HJMC"), ("HJMC",)),
+    "ODS_LWZZSJ": (("DYZGH", "ZZMC"), ("DYZXM", "ZZMC"), ("ZZMC",)),
+    "ODS_JSQYJZSJSJ": (("JGH", "JSDWMC"), ("JSXM", "JSDWMC")),
+    "ODS_KYXMJBSJ": (("DYZCRGH", "KTMC"), ("DYZCRXM", "KTMC"), ("KTMC",)),
+    "ODS_HXKTSJ": (("DYZCRGH", "KTMC"), ("DYZCRXM", "KTMC"), ("KTMC",)),
+    "ODS_ZSCQSJ": (("ZSCQMC",),),
+}
+
 
 def _with_aliases(spec: DatasetSpec) -> tuple[FieldSpec, ...]:
     aliases = _ALIASES.get(spec.code, {})
@@ -262,4 +277,12 @@ def with_ingestion_rules(spec: DatasetSpec) -> DatasetSpec:
         fields=_with_aliases(spec),
         lookups=spec.lookups or _LOOKUPS.get(spec.code, ()),
         derives=spec.derives or _derives(spec),
+        supplement_keys=spec.supplement_keys or _supplement_keys(spec),
+    )
+
+
+def _supplement_keys(spec: DatasetSpec) -> tuple[tuple[str, ...], ...]:
+    known = spec.field_map()
+    return tuple(
+        key for key in _SUPPLEMENT_KEYS.get(spec.code, ()) if all(code in known for code in key)
     )
